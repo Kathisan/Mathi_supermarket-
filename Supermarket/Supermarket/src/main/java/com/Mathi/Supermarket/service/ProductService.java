@@ -39,7 +39,12 @@ public class ProductService {
         return productRepository.save(existingProduct);
     }
 
-    
+    // --- SEARCH FUNCTION ---
+    public List<Product> searchProducts(String query) {
+        return productRepository.findByNameContainingIgnoreCase(query);
+    }
+
+
 
 }
 
