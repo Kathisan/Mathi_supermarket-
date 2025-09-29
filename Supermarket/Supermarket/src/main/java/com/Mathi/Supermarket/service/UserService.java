@@ -31,4 +31,14 @@ public class UserService {
 
         return userRepository.save(existingUser);
     }
+
+    public boolean checkLogin(String username, String password) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return user.getPassword().equals(password);
+        }
+        return false;
+    }
+
 }

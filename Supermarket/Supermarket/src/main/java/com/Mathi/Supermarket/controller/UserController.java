@@ -6,6 +6,7 @@ import com.Mathi.Supermarket.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 
 @RestController
@@ -32,4 +33,17 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> credentials) {
+        String username = credentials.get("username");
+        String password = credentials.get("password");
+
+        if (userService.checkLogin(username, password)) {
+            return ResponseEntity.ok().body(Map.of("message", "Login successful", "username", username));
+        } else {
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
+        }
+    }
+
 }
