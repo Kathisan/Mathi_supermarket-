@@ -42,5 +42,22 @@ public class ProductController {
         return productService.saveProduct(product);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+    }
+
+    @PutMapping("/{id}")
+    public Product updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+        return productService.updateProduct(id, productDetails);
+    }
+
+    @GetMapping("/search")
+    public List<Product> searchProducts(@RequestParam("query") String query) {
+
+        return productService.searchProducts(query);
+    }
+
+
 
 }
