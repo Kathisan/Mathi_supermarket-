@@ -17,4 +17,18 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public User updateUser(String username, User userDetails) {
+        User existingUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setFullName(userDetails.getFullName());
+        existingUser.setEmail(userDetails.getEmail());
+
+
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            existingUser.setPassword(userDetails.getPassword());
+        }
+
+        return userRepository.save(existingUser);
+    }
 }
