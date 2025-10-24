@@ -6,6 +6,8 @@ import com.Mathi.Supermarket.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 
 
@@ -44,6 +46,18 @@ public class UserController {
         } else {
             return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
         }
+    }
+
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok().body(Map.of("message", "User deleted successfully"));
     }
 
 }
