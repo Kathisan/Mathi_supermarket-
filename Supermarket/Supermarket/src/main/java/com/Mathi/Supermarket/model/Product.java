@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+
 @Entity
 @Table(name = "products")
 public class Product {
@@ -24,11 +25,14 @@ public class Product {
 
     private boolean allowFraction;
 
+    public boolean isAllowFraction() { return allowFraction; }
+    public void setAllowFraction(boolean allowFraction) { this.allowFraction = allowFraction; }
+
+
     // Getters and Setters
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -36,7 +40,6 @@ public class Product {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -44,23 +47,20 @@ public class Product {
     public double getPrice() {
         return price;
     }
-
     public void setPrice(double price) {
         this.price = price;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
-
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 
     public LocalDate getExpiryDate() {
         return expiryDate;
     }
-
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
     }
@@ -68,8 +68,10 @@ public class Product {
     public String getImageUrl() {
         return imageUrl;
     }
-
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public String getUnit() { return unit; } // New
+    public void setUnit(String unit) { this.unit = unit; }
 }

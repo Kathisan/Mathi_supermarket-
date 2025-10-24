@@ -5,7 +5,9 @@ import com.Mathi.Supermarket.model.Product;
 import com.Mathi.Supermarket.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -35,6 +37,8 @@ public class ProductService {
         existingProduct.setName(productDetails.getName());
         existingProduct.setPrice(productDetails.getPrice());
         existingProduct.setQuantity(productDetails.getQuantity());
+        existingProduct.setUnit(productDetails.getUnit());
+        existingProduct.setAllowFraction(productDetails.isAllowFraction());
         existingProduct.setExpiryDate(productDetails.getExpiryDate());
         return productRepository.save(existingProduct);
     }
@@ -43,7 +47,20 @@ public class ProductService {
     public List<Product> searchProducts(String query) {
         return productRepository.findByNameContainingIgnoreCase(query);
     }
+    // --- LOW STOCK & EXPIRY ALERTS ---
+    public List<Product> getLowStockProducts() {
+        return productRepository.findAll().stream()
+                .filter(product -> product.getQuantity() < 10)
+                .collect(Collectors.toList());
+    }
 
+    public List<Product> getExpiringSoonProducts() {
+        LocalDate thirtyDaysFromNow = LocalDate.now().plusDays(30);
+        return productRepository.findAll().stream()
+                .filter(product -> product.getExpiryDate() != null &&
+                        product.getExpiryDate().isBefore(thirtyDaysFromNow))
+                .collect(Collectors.toList());
+    }
 
 
 }
