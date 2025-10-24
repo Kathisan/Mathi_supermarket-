@@ -36,6 +36,15 @@ public class UserController {
         }
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        if (userService.isUsernameTaken(user.getUsername())) {
+            return ResponseEntity.status(409).body(Map.of("message", "Username is already taken"));
+        }
+        userService.registerUser(user);
+        return ResponseEntity.ok().body(Map.of("message", "Registration successful"));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
@@ -45,6 +54,20 @@ public class UserController {
             return ResponseEntity.ok().body(Map.of("message", "Login successful", "username", username));
         } else {
             return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
+        }
+    }
+
+    // --- Forgot Password ---
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        String newPassword = request.get("newPassword"); // password user wants to reset
+
+        boolean success = userService.resetPassword(username, newPassword);
+        if (success) {
+            return ResponseEntity.ok(Map.of("message", "Password reset successful"));
+        } else {
+            return ResponseEntity.status(404).body(Map.of("message", "Username not found"));
         }
     }
 

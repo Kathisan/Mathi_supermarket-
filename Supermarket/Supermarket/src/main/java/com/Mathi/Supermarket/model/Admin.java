@@ -1,6 +1,6 @@
 package com.Mathi.Supermarket.model;
 
-import jakarta.persistence.Entity;q
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

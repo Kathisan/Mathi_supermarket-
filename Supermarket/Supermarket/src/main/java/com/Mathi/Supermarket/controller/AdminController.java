@@ -27,4 +27,20 @@ public class AdminController {
             return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
         }
     }
+
+    // --- Forgot Password (Simple version, no email) ---
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+        String username = body.get("username");
+        String newPassword = body.get("newPassword");
+
+        boolean updated = adminService.updatePassword(username, newPassword);
+
+        if (updated) {
+            return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+        } else {
+            return ResponseEntity.status(404).body(Map.of("message", "Username not found"));
+        }
+    }
+
 }

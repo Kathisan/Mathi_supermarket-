@@ -24,4 +24,21 @@ public class AdminService {
         return false;
     }
 
+    public boolean isUsernameTaken(String username) {
+        return adminRepository.findByUsername(username).isPresent();
+    }
+
+
+    // --- Update password (for forgot password) ---
+    public boolean updatePassword(String username, String newPassword) {
+        Optional<Admin> adminOptional = adminRepository.findByUsername(username);
+        if (adminOptional.isPresent()) {
+            Admin admin = adminOptional.get();
+            admin.setPassword(newPassword);
+            adminRepository.save(admin);
+            return true;
+        }
+        return false;
+    }
+
 }
