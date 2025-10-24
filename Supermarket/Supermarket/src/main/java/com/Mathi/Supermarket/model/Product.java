@@ -17,9 +17,12 @@ public class Product {
 
     private String name;
     private double price;
-    private int quantity;
+    private double quantity;
+    private String unit;
     private LocalDate expiryDate;
     private String imageUrl;
+
+    private boolean allowFraction;
 
     // Getters and Setters
     public Long getId() {
