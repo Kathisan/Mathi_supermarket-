@@ -2,9 +2,11 @@ package com.Mathi.Supermarket.controller;
 
 import com.Mathi.Supermarket.model.Product;
 import com.Mathi.Supermarket.repository.ProductRepository;
+import com.Mathi.Supermarket.service.FileStorageService;
 import com.Mathi.Supermarket.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,6 +21,9 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
@@ -30,15 +35,26 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public Product addProduct(@RequestParam("name") String name,
-                              @RequestParam("price") double price,
-                              @RequestParam("quantity") int quantity,
-                              @RequestParam("expiryDate") LocalDate expiryDate){
+    public Product addProduct(
+            @RequestParam("name") String name,
+            @RequestParam("price") double price,
+            @RequestParam("quantity") double quantity,
+            @RequestParam("unit") String unit,
+            @RequestParam("expiryDate") String expiryDate,            @RequestParam("image") MultipartFile imageFile,
+            @RequestParam(value = "allowFraction", defaultValue = "false") boolean allowFraction){
+
+        LocalDate expDate = LocalDate.parse(expiryDate);
+        String fileName = fileStorageService.storeFile(imageFile);
+
         Product product = new Product();
         product.setName(name);
         product.setPrice(price);
         product.setQuantity(quantity);
-        product.setExpiryDate(expiryDate);
+        product.setUnit(unit);
+        product.setExpiryDate(expDate);
+        product.setImageUrl("/uploads/" + fileName);
+        product.setAllowFraction(allowFraction);
+
         return productService.saveProduct(product);
     }
 
@@ -58,6 +74,15 @@ public class ProductController {
         return productService.searchProducts(query);
     }
 
+    @GetMapping("/alerts/lowstock")
+    public List<Product> getLowStockProducts() {
+        return productService.getLowStockProducts();
+    }
+
+    @GetMapping("/alerts/expiringsoon")
+    public List<Product> getExpiringSoonProducts() {
+        return productService.getExpiringSoonProducts();
+    }
 
 
 }
