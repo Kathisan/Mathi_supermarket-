@@ -20,7 +20,7 @@ public class OrderItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    private int quantity;
+    private double quantity;
     private double price;
 
     // Getters and Setters...
@@ -48,11 +48,11 @@ public class OrderItem {
         this.product = product;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 
@@ -64,4 +64,3 @@ public class OrderItem {
         this.price = price;
     }
 }
-
