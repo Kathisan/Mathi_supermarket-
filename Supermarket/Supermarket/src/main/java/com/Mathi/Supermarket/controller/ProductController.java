@@ -40,6 +40,8 @@ public class ProductController {
             @RequestParam("price") double price,
             @RequestParam("quantity") double quantity,
             @RequestParam("unit") String unit,
+            @RequestParam("brandId") Long brandId,
+            @RequestParam("categoryId") Long categoryId,
             @RequestParam("expiryDate") String expiryDate,            @RequestParam("image") MultipartFile imageFile,
             @RequestParam(value = "allowFraction", defaultValue = "false") boolean allowFraction){
 
@@ -55,7 +57,10 @@ public class ProductController {
         product.setImageUrl("/uploads/" + fileName);
         product.setAllowFraction(allowFraction);
 
-        return productService.saveProduct(product);
+        Product saved = productService.addProduct(product, brandId, categoryId);
+
+        System.out.println("Saved Product ID: " + saved.getId());
+        return saved;
     }
 
     @DeleteMapping("/{id}")
@@ -84,5 +89,15 @@ public class ProductController {
         return productService.getExpiringSoonProducts();
     }
 
+    @GetMapping("/brand/{brand}")
+    public List<Product> getProductsByBrand(@PathVariable("brand") String brandName) {
+        return productRepository.findByBrand_NameIgnoreCase(brandName);
+    }
+
+    @GetMapping("/category/{category}")
+    public List<Product> getProductsByCategory(@PathVariable("category") String categoryName) {
+        return productRepository.findByCategory_NameIgnoreCase(categoryName);
+
+    }
 
 }

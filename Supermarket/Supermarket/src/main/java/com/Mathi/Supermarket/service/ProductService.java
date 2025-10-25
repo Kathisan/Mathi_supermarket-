@@ -3,6 +3,10 @@ package com.Mathi.Supermarket.service;
 
 import com.Mathi.Supermarket.model.Product;
 import com.Mathi.Supermarket.repository.ProductRepository;
+import com.Mathi.Supermarket.model.Brand;
+import com.Mathi.Supermarket.model.Category;
+import com.Mathi.Supermarket.repository.BrandRepository;
+import com.Mathi.Supermarket.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -14,6 +18,11 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private BrandRepository brandRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -60,6 +69,20 @@ public class ProductService {
                 .filter(product -> product.getExpiryDate() != null &&
                         product.getExpiryDate().isBefore(thirtyDaysFromNow))
                 .collect(Collectors.toList());
+    }
+
+    public Product addProduct(Product product, Long brandId, Long categoryId) {
+
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new RuntimeException("Brand not found with ID: " + brandId));
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + categoryId));
+
+        product.setBrand(brand);
+        product.setCategory(category);
+
+        return productRepository.save(product);
     }
 
 

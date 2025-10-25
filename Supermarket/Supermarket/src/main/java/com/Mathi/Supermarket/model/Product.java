@@ -1,11 +1,8 @@
 package com.Mathi.Supermarket.model;
 
 import java.time.LocalDate;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 
 
 @Entity
@@ -22,6 +19,14 @@ public class Product {
     private String unit;
     private LocalDate expiryDate;
     private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     private boolean allowFraction;
 
