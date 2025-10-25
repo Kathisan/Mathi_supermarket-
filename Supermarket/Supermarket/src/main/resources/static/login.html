@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - Mathi's Grocery</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .auth-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      max-width: 500px;
+      width: 100%;
+      padding-bottom: 30px;
+    }
+
+    .auth-header {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .auth-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-section {
+      padding: 0 40px;
+    }
+
+    .form-floating {
+      margin-bottom: 25px;
+    }
+
+    .form-control {
+      border: 2px solid #e9ecef;
+      border-radius: 15px;
+      padding: 15px 20px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+
+    .form-control:focus {
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      border: none;
+      border-radius: 25px;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #6c757d;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .back-to-store {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #495057;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+    }
+
+    .loading-spinner {
+      display: none;
+      margin-right: 10px;
+    }
+
+    .is-invalid {
+      border-color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+
+<a href="/" class="back-to-store">
+  <i class="bi bi-arrow-left me-2"></i>
+  Back to Store
+</a>
+
+<div class="container">
+  <div class="auth-container mx-auto">
+    <!-- Header -->
+    <div class="auth-header">
+      <h1><i class="bi bi-shield-lock me-3"></i>Admin Portal</h1>
+    </div>
+
+    <!-- Login Form -->
+    <div class="form-section">
+      <h3 class="mb-4 fw-bold text-center">Admin Login</h3>
+      <form id="loginForm" novalidate>
+        <div class="form-floating">
+          <input type="text" class="form-control" id="loginUsername" placeholder="Username" required>
+          <label for="loginUsername"><i class="bi bi-person me-2"></i>Username</label>
+          <div class="invalid-feedback">Please enter your username.</div>
+        </div>
+        <div class="form-floating position-relative">
+          <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+          <label for="loginPassword"><i class="bi bi-lock me-2"></i>Password</label>
+          <button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)">
+            <i class="bi bi-eye"></i>
+          </button>
+          <div class="invalid-feedback">Please enter your password.</div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">
+          <span class="loading-spinner spinner-border spinner-border-sm"></span>
+          <i class="bi bi-box-arrow-in-right me-2"></i>
+          Sign In
+        </button>
+
+
+        <div class="text-center mt-3">
+          <a href="#" onclick="openForgotPassword()" class="text-decoration-none text-primary fw-semibold">
+            Forgot Password?
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title"><i class="bi bi-key me-2"></i>Reset Admin Password</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="forgotPasswordForm">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="resetUsername" placeholder="Enter username" required>
+            <label for="resetUsername">Username</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" required>
+            <label for="newPassword">New Password</label>
+          </div>
+          <button type="submit" class="btn btn-success w-100">
+            <i class="bi bi-check-circle me-2"></i>Update Password
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Toast notification
+  function showToast(message, type = 'success') {
+    const toastHtml = `<div class="toast align-items-center text-white bg-${type} border-0" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"><div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>`;
+    document.body.insertAdjacentHTML('beforeend', toastHtml);
+    const toast = new bootstrap.Toast(document.querySelector('.toast:last-child'));
+    toast.show();
+    setTimeout(() => { document.querySelector('.toast:last-child')?.remove(); }, 5000);
+  }
+
+  // Password toggle
+  function togglePassword(inputId, button) {
+    const input = document.getElementById(inputId);
+    const icon = button.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  }
+
+  // Admin Login
+  async function login(event) {
+    event.preventDefault();
+    const form = event.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const spinner = submitBtn.querySelector('.loading-spinner');
+
+    const usernameInput = document.getElementById('loginUsername');
+    const passwordInput = document.getElementById('loginPassword');
+    let isValid = true;
+
+    if (!usernameInput.value.trim()) { usernameInput.classList.add('is-invalid'); isValid = false; }
+    else usernameInput.classList.remove('is-invalid');
+
+    if (!passwordInput.value) { passwordInput.classList.add('is-invalid'); isValid = false; }
+    else passwordInput.classList.remove('is-invalid');
+
+    if (!isValid) return;
+
+    spinner.style.display = 'inline-block';
+    submitBtn.disabled = true;
+
+    try {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (response.ok) {
+        showToast('Login successful! Redirecting...', 'success');
+        sessionStorage.setItem('isAdminLoggedIn', 'true');
+        setTimeout(() => { window.location.href = '/admin.html'; }, 1500);
+      } else {
+        showToast('Login failed! Invalid credentials.', 'danger');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      showToast('Connection error. Please try again.', 'danger');
+    } finally {
+      spinner.style.display = 'none';
+      submitBtn.disabled = false;
+    }
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', login);
+</script>
+
+
+<script>
+  // Open forgot password modal
+  function openForgotPassword() {
+    const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+    modal.show();
+  }
+
+  // Handle password reset
+  document.getElementById('forgotPasswordForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const username = document.getElementById('resetUsername').value.trim();
+    const newPassword = document.getElementById('newPassword').value;
+
+    if (!username || !newPassword) {
+      showToast('Please fill all fields.', 'danger');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, newPassword })
+      });
+
+      if (response.ok) {
+        showToast('Password updated successfully!', 'success');
+        const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+        modal.hide();
+      } else {
+        showToast('Username not found or update failed.', 'danger');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Server error, please try again.', 'danger');
+    }
+  });
+</script>
+
+</body>
+</html>

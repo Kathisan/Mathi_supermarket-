@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login or Register - Mathi's Grocery</title>
+  <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+          rel="stylesheet"
+  />
+  <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+          rel="stylesheet"
+  />
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .auth-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #28a745;
+    }
+  </style>
+</head>
+<body>
+<div class="auth-card p-4 m-3">
+  <ul class="nav nav-pills nav-fill mb-4" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+              class="nav-link active"
+              id="pills-login-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#pills-login"
+              type="button"
+      >
+        Login
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+              class="nav-link"
+              id="pills-register-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#pills-register"
+              type="button"
+      >
+        Register
+      </button>
+    </li>
+  </ul>
+  <div class="tab-content" id="pills-tabContent">
+    <!-- Login Form -->
+    <div class="tab-pane fade show active" id="pills-login">
+      <h3 class="text-center mb-4">Welcome Back!</h3>
+      <div class="form-floating mb-3">
+        <input
+                type="text"
+                class="form-control"
+                id="loginUsername"
+                placeholder="Username"
+        />
+        <label>Username</label>
+        <div class="invalid-feedback">Please enter your username.</div>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+                type="password"
+                class="form-control"
+                id="loginPassword"
+                placeholder="Password"
+        />
+        <label>Password</label>
+        <div class="invalid-feedback">Please enter your password.</div>
+      </div>
+      <div class="d-grid">
+        <button class="btn btn-success btn-lg" onclick="login()">
+          Sign In
+        </button>
+      </div>
+      <!-- Forgot Password Button  -->
+      <div class="text-center mt-2">
+        <button class="btn btn-link" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+          Forgot Password?
+        </button>
+      </div>
+    </div>
+    <!-- Register Form -->
+    <div class="tab-pane fade" id="pills-register">
+      <h3 class="text-center mb-4">Create Your Account</h3>
+      <div class="form-floating mb-3">
+        <input
+                type="text"
+                class="form-control"
+                id="regUsername"
+                placeholder="Username"
+        />
+        <label>Username</label>
+        <div class="invalid-feedback">Please enter your username.</div>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+                type="password"
+                class="form-control"
+                id="regPassword"
+                placeholder="Password"
+        />
+        <label>Password</label>
+        <div class="invalid-feedback">Please enter your password.</div>
+      </div>
+      <div class="d-grid">
+        <button class="btn btn-success btn-lg" onclick="register()">
+          Create Account
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-3">
+    <a href="/" class="btn btn-success btn-lg">
+      <i class="bi bi-arrow-left me-2"></i> Back to Shop
+    </a>
+  </div>
+</div>
+
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reset Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" id="fpUsername" class="form-control" placeholder="Enter your username">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">New Password</label>
+          <input type="password" id="fpNewPassword" class="form-control" placeholder="Enter new password">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" id="fpConfirmPassword" class="form-control" placeholder="Confirm new password">
+        </div>
+        <div class="d-grid">
+          <button class="btn btn-success" onclick="resetPassword()">Reset Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  async function register() {
+    const username = document.getElementById("regUsername").value;
+    const password = document.getElementById("regPassword").value;
+
+    let isValid = true;
+    const usernameInput = document.getElementById("regUsername");
+    const passwordInput = document.getElementById("regPassword");
+
+    if (!usernameInput.value.trim()) { usernameInput.classList.add('is-invalid'); isValid = false; }
+    else usernameInput.classList.remove('is-invalid');
+
+    if (!passwordInput.value.trim()) { passwordInput.classList.add('is-invalid'); isValid = false; }
+    else passwordInput.classList.remove('is-invalid');
+
+    if (!isValid) return;
+
+
+    const response = await fetch("/api/users/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await response.json();
+    alert(data.message);
+    if (response.ok) {
+      // Switch to login tab after successful registration
+      document.getElementById("pills-login-tab").click();
+    }
+  }
+
+  async function login() {
+    const username = document.getElementById("loginUsername").value;
+    const password = document.getElementById("loginPassword").value;
+
+    let isValid = true;
+    const usernameInput = document.getElementById("loginUsername");
+    const passwordInput = document.getElementById("loginPassword");
+
+    if (!usernameInput.value.trim()) { usernameInput.classList.add('is-invalid'); isValid = false; }
+    else usernameInput.classList.remove('is-invalid');
+
+    if (!passwordInput.value.trim()) { passwordInput.classList.add('is-invalid'); isValid = false; }
+    else passwordInput.classList.remove('is-invalid');
+
+    if (!isValid) return;
+
+
+    const response = await fetch("/api/users/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      // Save user info in browser's local storage
+      localStorage.setItem("loggedInUser", data.username);
+      window.location.href = "/";
+    } else {
+      alert(data.message);
+    }
+  }
+
+  // RESET PASSWORD
+  async function resetPassword() {
+    const username = document.getElementById("fpUsername").value;
+    const newPassword = document.getElementById("fpNewPassword").value;
+    const confirmPassword = document.getElementById("fpConfirmPassword").value;
+
+    if (!username || !newPassword || !confirmPassword) {
+      alert("All fields are required!");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    const response = await fetch("/api/users/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, newPassword })
+    });
+
+    const data = await response.json();
+    alert(data.message);
+
+    if (response.ok) {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+      modal.hide();
+      document.getElementById("pills-login-tab").click();
+    }
+  }
+</script>
+</body>
+</html>

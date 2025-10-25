@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us - Mathi's Grocery</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        .navbar { background: linear-gradient(135deg, #28a745, #20c997); }
+        .navbar-brand { font-size: 1.8rem; font-weight: 700; color: white !important; }
+        .page-header { padding: 80px 0; background-color: #f8f9fa; text-align: center; }
+        .contact-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 40px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .contact-icon {
+            font-size: 3rem;
+            color: white;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+        }
+        .feedback-form {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        .feedback-item {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+        .feedback-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .feedback-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .feedback-message {
+            color: #495057;
+            line-height: 1.6;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .delete-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .star {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+        }
+        .rating-display {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+        .rating-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/index.html"><i class="bi bi-basket me-2"></i>Mathi's Grocery</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about.html">About Us</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header">
+    <h1 class="display-4 fw-bold">Get In Touch</h1>
+    <p class="lead">We'd love to hear from you!</p>
+</div>
+
+<!-- Main Content -->
+<div class="container my-5">
+    <div class="row text-center">
+        <!-- Address Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="bi bi-geo-alt-fill"></i>
+                </div>
+                <h3 class="fw-bold">Our Address</h3>
+                <p class="text-muted">No 123, Main Street<br>Jaffna, Sri Lanka</p>
+            </div>
+        </div>
+
+        <!-- Email Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="bi bi-envelope-fill"></i>
+                </div>
+                <h3 class="fw-bold">Email Us</h3>
+                <p class="text-muted">contact@mathisgrocery.com</p>
+            </div>
+        </div>
+
+        <!-- Phone Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="bi bi-telephone-fill"></i>
+                </div>
+                <h3 class="fw-bold">Call Us</h3>
+                <p class="text-muted">+94 123 456 789</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Section -->
+    <div class="row mt-5">
+        <div class="col-lg-8 mx-auto">
+            <!-- Feedback Form -->
+            <div class="feedback-form">
+                <h3 class="text-center mb-4">
+                    <i class="bi bi-chat-dots me-2"></i>Share Your Feedback
+                </h3>
+
+                <!-- Rating Section -->
+                <div class="text-center mb-4">
+                    <label class="form-label mb-2">Rate Your Experience</label>
+                    <div class="star-rating justify-content-center" id="starRating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <div class="rating-text" id="ratingText">Click to rate</div>
+                </div>
+
+                <form id="feedbackForm">
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Your Feedback</label>
+                        <textarea class="form-control" id="message" rows="5" placeholder="Share your thoughts, suggestions, or comments..." required></textarea>
+                        <div class="invalid-feedback">Please enter your feedback message.</div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-send me-2"></i>Submit Feedback
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Previous Feedbacks -->
+            <div class="mt-5">
+                <h3 class="text-center mb-4">
+                    <i class="bi bi-chat-quote me-2"></i>Previous Feedbacks
+                </h3>
+                <div id="feedbacksList">
+                    <!-- Feedbacks will be loaded here -->
+                </div>
+                <div id="noFeedbacks" class="text-center text-muted" style="display: none;">
+                    <i class="bi bi-chat-dots" style="font-size: 3rem;"></i>
+                    <p class="mt-3">No feedbacks yet. Be the first to share your thoughts!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    let currentRating = 0;
+
+    // Load feedbacks when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        loadFeedbacks();
+        setupStarRating();
+    });
+
+    // Setup star rating functionality
+    function setupStarRating() {
+        const stars = document.querySelectorAll('.star');
+        const ratingText = document.getElementById('ratingText');
+
+        stars.forEach((star, index) => {
+            star.addEventListener('click', function() {
+                currentRating = parseInt(this.dataset.rating);
+                updateStarDisplay();
+                updateRatingText();
+            });
+
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.dataset.rating);
+                highlightStars(rating);
+            });
+        });
+
+        document.getElementById('starRating').addEventListener('mouseleave', function() {
+            updateStarDisplay();
+        });
+    }
+
+    function updateStarDisplay() {
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            if (index < currentRating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    function highlightStars(rating) {
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.style.color = '#ffc107';
+            } else {
+                star.style.color = '#ddd';
+            }
+        });
+    }
+
+    function updateRatingText() {
+        const ratingText = document.getElementById('ratingText');
+        const ratingTexts = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+        ratingText.textContent = currentRating > 0 ? ratingTexts[currentRating] : 'Click to rate';
+    }
+
+    // Feedback form submission
+    document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const message = document.getElementById('message').value.trim();
+        const loggedInUser = localStorage.getItem('loggedInUser');
+
+        // Clear previous validation states
+        document.getElementById('message').classList.remove('is-invalid');
+
+        // Validate form fields
+        if (!message) {
+            document.getElementById('message').classList.add('is-invalid');
+            return;
+        }
+
+        // Check if user is logged in
+        if (!loggedInUser) {
+            alert('Please log in to submit feedback.');
+            window.location.href = '/customer-login.html';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/feedbacks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: loggedInUser,
+                    message: message,
+                    rating: currentRating > 0 ? currentRating : null
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Feedback submitted successfully!');
+                // Clear form
+                document.getElementById('feedbackForm').reset();
+                currentRating = 0;
+                updateStarDisplay();
+                updateRatingText();
+                // Reload feedbacks
+                loadFeedbacks();
+            } else {
+                alert('Failed to submit feedback: ' + data.message);
+            }
+        } catch (error) {
+            alert('Error submitting feedback. Please try again.');
+        }
+    });
+
+    // Load all feedbacks
+    async function loadFeedbacks() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            // If not logged in, show message to login
+            const feedbacksList = document.getElementById('feedbacksList');
+            const noFeedbacks = document.getElementById('noFeedbacks');
+            feedbacksList.innerHTML = '';
+            noFeedbacks.innerHTML = '<div class="text-center"><p>Please log in to view your feedbacks.</p></div>';
+            noFeedbacks.style.display = 'block';
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/feedbacks?username=${loggedInUser}`);
+            const feedbacks = await response.json();
+
+            const feedbacksList = document.getElementById('feedbacksList');
+            const noFeedbacks = document.getElementById('noFeedbacks');
+
+            if (feedbacks.length === 0) {
+                feedbacksList.innerHTML = '';
+                noFeedbacks.innerHTML = '<div class="text-center"><p>You haven\'t submitted any feedback yet.</p></div>';
+                noFeedbacks.style.display = 'block';
+            } else {
+                noFeedbacks.style.display = 'none';
+                feedbacksList.innerHTML = feedbacks.map(feedback => createFeedbackHTML(feedback)).join('');
+            }
+        } catch (error) {
+            console.error('Error loading feedbacks:', error);
+        }
+    }
+
+    // Create HTML for a feedback item
+    function createFeedbackHTML(feedback) {
+        const date = new Date(feedback.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const ratingStars = feedback.rating ? createRatingStars(feedback.id, feedback.rating) : '';
+
+        return `
+            <div class="feedback-item">
+                <div class="feedback-header d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="feedback-meta">
+                            ${date}
+                        </div>
+                        ${ratingStars}
+                    </div>
+                    <button class="delete-btn" onclick="deleteFeedback(${feedback.id})" title="Delete feedback">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+                <div class="feedback-message mt-3">
+                    ${escapeHtml(feedback.message).replace(/\n/g, '<br>')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Create rating stars for display
+    function createRatingStars(feedbackId, rating) {
+        let starsHTML = '<div class="rating-display mt-2">';
+        for (let i = 1; i <= 5; i++) {
+            const starClass = i <= rating ? 'active' : '';
+            starsHTML += `<span class="star ${starClass}" onclick="updateFeedbackRating(${feedbackId}, ${i})" style="font-size: 1rem; cursor: pointer;">★</span>`;
+        }
+        starsHTML += '</div>';
+        return starsHTML;
+    }
+
+    // Update feedback rating
+    async function updateFeedbackRating(feedbackId, rating) {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            alert('Please log in to update rating.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/feedbacks/${feedbackId}/rating`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: loggedInUser,
+                    rating: rating
+                })
+            });
+
+            if (response.ok) {
+                // Reload feedbacks to show updated rating
+                loadFeedbacks();
+            } else {
+                const data = await response.json();
+                alert('Failed to update rating: ' + data.message);
+            }
+        } catch (error) {
+            alert('Error updating rating. Please try again.');
+        }
+    }
+
+    // Delete feedback
+    async function deleteFeedback(id) {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            alert('Please log in to delete feedback.');
+            return;
+        }
+
+        if (confirm('Are you sure you want to delete this feedback?')) {
+            try {
+                const response = await fetch(`/api/feedbacks/${id}?username=${loggedInUser}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('Feedback deleted successfully!');
+                    loadFeedbacks();
+                } else {
+                    const data = await response.json();
+                    alert('Failed to delete feedback: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error deleting feedback. Please try again.');
+            }
+        }
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Real-time validation for message field
+    document.getElementById('message').addEventListener('input', function() {
+        if (this.value.trim()) {
+            this.classList.remove('is-invalid');
+        }
+    });
+</script>
+</body>
+</html>
