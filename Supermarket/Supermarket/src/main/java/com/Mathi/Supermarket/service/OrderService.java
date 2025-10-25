@@ -3,6 +3,7 @@ package com.Mathi.Supermarket.service;
 import com.Mathi.Supermarket.model.CustomerOrder;
 import com.Mathi.Supermarket.model.OrderItem;
 import com.Mathi.Supermarket.model.Product;
+import com.Mathi.Supermarket.model.User;
 import com.Mathi.Supermarket.repository.CustomerOrderRepository;
 import com.Mathi.Supermarket.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class OrderService {
     private ProductRepository productRepository;
 
     @Transactional
-    public CustomerOrder placeOrder(Map<String, Object> orderData) {
+    public CustomerOrder placeOrder(Map<String, Object> orderData, User user) {
 
         CustomerOrder order = new CustomerOrder();
         order.setCustomerName((String) orderData.get("customerName"));
@@ -33,6 +34,8 @@ public class OrderService {
         order.setOrderDate(LocalDateTime.now());
         order.setStatus("NEW");
         order.setOrderItems(new ArrayList<>());
+        order.setUser(user);
+
 
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> cartItems = (List<Map<String, Object>>) orderData.get("cartItems");
@@ -41,11 +44,26 @@ public class OrderService {
 
         for (Map<String, Object> itemData : cartItems) {
             Long productId = ((Number) itemData.get("id")).longValue();
-            int quantity = (int) itemData.get("quantity");
+            Number qtyNumber = (Number) itemData.get("quantity");
+            double quantity = qtyNumber.doubleValue();
 
 
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+
+            // Determine if fractions are allowed based on unit
+            String unit = product.getUnit();
+            boolean fractionAllowed = unit.equalsIgnoreCase("kg")
+                    || unit.equalsIgnoreCase("g")
+                    || unit.equalsIgnoreCase("ltr");
+
+
+            // Validate quantity
+            if (!fractionAllowed && quantity % 1 != 0) {
+                throw new IllegalArgumentException(
+                        "Quantity must be a whole number for product: " + product.getName()
+                );
+            }
 
 
             if (product.getQuantity() < quantity) {
@@ -77,6 +95,69 @@ public class OrderService {
         return orderRepository.findAllByOrderByIdDesc();
     }
 
+
+    public long getNewOrderCount() {
+        return orderRepository.countByStatus("NEW");
+    }
+
+    @Transactional
+    public void markAllNewOrdersAsProcessing() {
+        List<CustomerOrder> newOrders = orderRepository.findByStatus("NEW");
+        for (CustomerOrder order : newOrders) {
+            order.setStatus("PROCESSING");
+        }
+        orderRepository.saveAll(newOrders);
+    }
+
+    @Transactional
+    public CustomerOrder updateOrderStatus(Long orderId, String newStatus) {
+        CustomerOrder order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+        String oldStatus = order.getStatus();
+
+
+        if (newStatus.equals("CANCELLED") && !oldStatus.equals("CANCELLED")) {
+            for (OrderItem item : order.getOrderItems()) {
+                Product product = item.getProduct();
+                if (product != null) {
+                    product.setQuantity(product.getQuantity() + item.getQuantity());
+                    productRepository.save(product);
+                }
+            }
+        }
+
+        order.setStatus(newStatus);
+        return orderRepository.saveAndFlush(order);
+    }
+
+    public List<CustomerOrder> getOrdersByUser(User user) {
+        return orderRepository.findByUserOrderByIdDesc(user); // Requires repository method
+    }
+
+
+    @Transactional
+    public CustomerOrder cancelOrderByUser(Long orderId, User user) {
+        CustomerOrder order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("You cannot cancel this order");
+        }
+
+        if ("COMPLETED".equalsIgnoreCase(order.getStatus())) {
+            throw new RuntimeException("Completed orders cannot be cancelled");
+        }
+
+        for (OrderItem item : order.getOrderItems()) {
+            Product product = item.getProduct();
+            if (product != null) {
+                product.setQuantity(product.getQuantity() + item.getQuantity());
+                productRepository.save(product);
+            }
+        }
+
+        order.setStatus("CANCELLED");
+        return orderRepository.saveAndFlush(order);
+    }
 }
-
-
