@@ -21,6 +21,31 @@ public class CustomerOrder {
     private LocalDateTime orderDate;
     private String status;
 
+    // ================== ADD THIS: Link order to user ==================
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    // ================================================================
+
+    // ================== ADD THIS: Track feedback =====================
+    private boolean feedbackGiven = false;
+
+    public boolean isFeedbackGiven() {
+        return feedbackGiven;
+    }
+
+    public void setFeedbackGiven(boolean feedbackGiven) {
+        this.feedbackGiven = feedbackGiven;
+    }
+    // ================================================================
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonManagedReference
@@ -91,3 +116,4 @@ public class CustomerOrder {
         this.orderItems = orderItems;
     }
 }
+
