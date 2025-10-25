@@ -26,7 +26,6 @@ public class OrderService {
 
     @Transactional
     public CustomerOrder placeOrder(Map<String, Object> orderData, User user) {
-
         CustomerOrder order = new CustomerOrder();
         order.setCustomerName((String) orderData.get("customerName"));
         order.setCustomerAddress((String) orderData.get("customerAddress"));

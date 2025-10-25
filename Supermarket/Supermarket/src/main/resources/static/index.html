@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mathi's Grocery - Online Store</title>
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+            rel="stylesheet"
+    />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white !important;
+        }
+        .hero-section {
+
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.8), rgba(32, 201, 151, 0.8)), url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80');
+
+
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+
+
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .product-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .product-image {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+        .cart-offcanvas {
+            width: 400px !important;
+        }
+        .cart-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #28a745;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .btn-add-cart {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-add-cart:hover {
+            transform: scale(1.05);
+        }
+        .stock-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(40, 167, 69, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .stock-low {
+            background: rgba(220, 53, 69, 0.9) !important;
+        }
+        .price-tag {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        .admin-link {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: #6c757d;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .admin-link:hover {
+            transform: translateY(-2px);
+        }
+        .footer-section {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+        .footer-section p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        .social-icons a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            margin-left: 20px;
+            transition: all 0.3s ease;
+        }
+        .social-icons a:hover {
+            opacity: 0.8;
+        }
+        @media (max-width: 768px) {
+            .cart-offcanvas {
+                width: 100% !important;
+            }
+        }
+
+        .rounded-circle:hover {
+            transform: scale(1.1);
+            transition: 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/"
+        ><i class="bi bi-basket me-2"></i>Mathi's Grocery</a
+        >
+        <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Home</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/about.html">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact.html">Contact</a></li>
+                <li class="nav-item ms-lg-3" id="user-status">
+                    <a class="btn btn-outline-light" href="/customer-login.html">Login / Register</a>
+                </li>
+                <li class="nav-item ms-lg-2">
+                    <button
+                            class="btn btn-light position-relative"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#cartOffcanvas"
+                    >
+                        <i class="bi bi-cart3 fs-5 text-success"></i>
+                        <span class="cart-badge" id="cart-count">0</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">Welcome to Mathi's Grocery</h1>
+        <p class="lead">
+            Your one-stop shop for fresh groceries and daily essentials
+        </p>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title text-center">Our Fresh Products</h2>
+
+        <!-- Search Bar -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-6">
+                <div class="input-group input-group-lg">
+                    <input
+                            type="text"
+                            id="searchInput"
+                            class="form-control"
+                            placeholder="Search for products (e.g., Milk, Bread...)"
+                            onkeyup="performSearchOnKeyUp(event)"
+                    />
+                    <button
+                            class="btn btn-success"
+                            type="button"
+                            onclick="performSearch()"
+                    >
+                        <i class="bi bi-search me-1"></i> Search
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="text-center mt-4">
+            <h4 class="fw-bold mb-3">Shop by Brand</h4>
+            <div class="d-flex justify-content-center flex-wrap gap-4 mb-4" id="brand-section">
+                <!-- Brands will be loaded dynamically from backend -->
+            </div>
+
+            <h4 class="fw-bold mb-3 mt-5">Shop by Category</h4>
+            <div class="d-flex justify-content-center flex-wrap gap-4" id="category-section">
+                <!-- Categories will be loaded dynamically from backend -->
+            </div>
+        </div>
+
+        <div class="text-center my-5">
+            <h2 class="section-title">Products</h2>
+        </div>
+
+        <div id="loading" class="text-center py-5">
+            <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading fresh products...</p>
+        </div>
+        <div id="product-grid" class="row g-4" style="display: none"></div>
+        <div id="no-products" class="text-center py-5" style="display: none">
+            <i class="bi bi-exclamation-circle display-1 text-muted"></i>
+            <h3 class="mt-3 text-muted">No products available</h3>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Section -->
+<footer class="footer-section">
+    <div class="container">
+        <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start"
+        >
+            <p>&copy; 2025 Mathi's Grocery. All Rights Reserved.</p>
+            <div class="social-icons mt-3 mt-md-0">
+                <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" aria-label="Instagram"
+                ><i class="bi bi-instagram"></i
+                ></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Shopping Cart Offcanvas -->
+<div
+        class="offcanvas offcanvas-end cart-offcanvas"
+        tabindex="-1"
+        id="cartOffcanvas"
+>
+    <div class="offcanvas-header bg-light">
+        <h5 class="offcanvas-title fw-bold">
+            <i class="bi bi-cart3 me-2"></i>Shopping Cart
+        </h5>
+        <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="offcanvas"
+        ></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="empty-cart" class="text-center py-5">
+            <i class="bi bi-cart-x display-1 text-muted"></i>
+            <h4 class="mt-3 text-muted">Your cart is empty</h4>
+        </div>
+        <div id="cart-items-container" style="display: none">
+            <div id="cart-items"></div>
+            <hr class="my-4" />
+            <div class="cart-summary">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold">Total Amount:</h5>
+                    <h5 class="fw-bold text-success">
+                        £ <span id="cart-total">0.00</span>
+                    </h5>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success btn-lg" onclick="checkout()">
+                        <i class="bi bi-credit-card me-2"></i>Checkout
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="clearCart()">
+                        <i class="bi bi-trash me-2"></i>Clear Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<a href="/admin.html" class="admin-link"
+><i class="bi bi-gear me-2"></i>Admin Login</a
+>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    function showToast(message, type = "success") {
+        const toastHtml = `<div class="toast align-items-center text-white bg-${type} border-0" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"><div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>`;
+        document.body.insertAdjacentHTML("beforeend", toastHtml);
+        const toast = new bootstrap.Toast(
+            document.querySelector(".toast:last-child")
+        );
+        toast.show();
+        setTimeout(() => {
+            document.querySelector(".toast:last-child")?.remove();
+        }, 3000);
+    }
+
+
+    async function displayProducts(searchQuery = null) {
+        try {
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("product-grid").style.display = "none";
+            document.getElementById("no-products").style.display = "none";
+
+            let url = "/api/products";
+            if (searchQuery && searchQuery.trim() !== "") {
+                url = `/api/products/search?query=${encodeURIComponent(
+                    searchQuery
+                )}`;
+            }
+
+            const response = await fetch(url);
+            const products = await response.json();
+            const grid = document.getElementById("product-grid");
+
+            document.getElementById("loading").style.display = "none";
+
+            if (products.length === 0) {
+                const noProductsDiv = document.getElementById("no-products");
+                noProductsDiv.style.display = "block";
+                noProductsDiv.querySelector("h3").textContent = searchQuery
+                    ? `No products found for "${searchQuery}"`
+                    : "No products available";
+                return;
+            }
+
+            grid.innerHTML = "";
+            document.getElementById("product-grid").style.display = "flex";
+
+            products.forEach((product) => {
+                const stockClass = product.quantity < 10 ? "stock-low" : "";
+                const roundedQty = Math.round(product.quantity * 100) / 100; // rounds to 2 decimal places
+                const stockText =
+                    product.quantity < 10
+                        ? "Low Stock"
+                        : `${roundedQty} in stock`;
+
+                grid.innerHTML += `
+    <div class="col-lg-3 col-md-4 col-sm-6">
+        <div class="card product-card">
+            <div class="position-relative">
+                <img src="${product.imageUrl}" class="product-image" alt="${product.name}">
+                <span class="stock-badge ${stockClass}">${stockText}</span>
+            </div>
+            <div class="card-body text-center">
+                <h5 class="card-title fw-bold mb-3">${product.name}</h5>
+                <div class="price-tag d-inline-block mb-3">£ ${parseFloat(product.price).toFixed(2)}</div>
+
+                <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                    <input type="number" id="qty-${product.id}" class="form-control form-control-sm text-center" value="1" min="0.1" step="0.1" style="width:70px;">
+                    <select id="unit-${product.id}" class="form-select form-select-sm" style="width:80px;">
+                        <option value="kg">kg</option>
+                        <option value="g">g</option>
+                        <option value="unit">pcs</option>
+                    </select>
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-add-cart" onclick="addToCart(${product.id}, '${product.name}', ${product.price})" ${product.quantity === 0 ? "disabled" : ""}>
+                        <i class="bi bi-cart-plus me-2"></i>
+                        ${product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
+
+                // ======= Dynamic step based on unit =======
+                const qtyInput = document.getElementById(`qty-${product.id}`);
+                const unitSelect = document.getElementById(`unit-${product.id}`);
+
+                unitSelect.addEventListener('change', function() {
+                    if (unitSelect.value === 'unit') {
+                        qtyInput.step = "1";  // pcs must be whole numbers
+                        if (qtyInput.value % 1 !== 0) qtyInput.value = Math.ceil(qtyInput.value);
+                    } else {
+                        qtyInput.step = "0.01"; // fractions allowed
+                    }
+                });
+
+                if (unitSelect.value === 'unit') {
+                    qtyInput.step = "1";
+                    if (qtyInput.value % 1 !== 0) qtyInput.value = Math.ceil(qtyInput.value);
+                } else {
+                    qtyInput.step = "0.01";
+                }
+
+
+            });
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("no-products").style.display = "block";
+            showToast("Failed to load products", "danger");
+        }
+    }
+
+    function performSearchOnKeyUp(event) {
+        if (event.key === "Enter") {
+            performSearch();
+        }
+    }
+
+    async function performSearch() {
+        const query = document.getElementById("searchInput").value;
+        await displayProducts(query);
+    }
+
+    function addToCart(id, name, price) {
+        const qtyInput = document.getElementById(`qty-${id}`);
+        const unitSelect = document.getElementById(`unit-${id}`);
+
+        let quantity = parseFloat(qtyInput.value);
+        const unit = unitSelect.value;
+
+        if (unit === 'unit' && !Number.isInteger(quantity)) {
+            showToast("Please enter a whole number for pcs.", "warning");
+            return;
+        }
+
+
+        if (isNaN(quantity) || quantity <= 0) {
+            showToast("Please enter a valid quantity.", "warning");
+            return;
+        }
+
+        // Convert grams to kg if price is per kg
+        if (unit === 'g') quantity = quantity / 1000;
+
+        const existingItem = cart.find(item => item.id === id && item.unit === unit);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            cart.push({ id, name, price, quantity, unit });
+        }
+
+        showToast(`${name} (${qtyInput.value} ${unit}) added to cart!`, "success");
+        updateCartDisplay();
+    }
+    function removeFromCart(id) {
+        const itemIndex = cart.findIndex((item) => item.id === id);
+        if (itemIndex > -1) {
+            cart.splice(itemIndex, 1);
+            updateCartDisplay();
+        }
+    }
+
+    function updateQuantity(id, newQuantity) {
+        const item = cart.find((item) => item.id === id);
+        if (item) {
+            if (newQuantity <= 0) {
+                removeFromCart(id);
+            } else {
+                item.quantity = newQuantity;
+                updateCartDisplay();
+            }
+        }
+    }
+
+    function updateCartDisplay() {
+        const cartItemsContainer = document.getElementById(
+            "cart-items-container"
+        );
+        const emptyCartDiv = document.querySelector(
+            ".offcanvas-body #empty-cart"
+        );
+        const cartList = document.getElementById("cart-items");
+        const cartTotal = document.getElementById("cart-total");
+        const cartCount = document.getElementById("cart-count");
+
+        let total = 0;
+        let totalItems = 0;
+
+        if (cart.length === 0) {
+            cartItemsContainer.style.display = "none";
+            emptyCartDiv.style.display = "block";
+        } else {
+            cartItemsContainer.style.display = "block";
+            emptyCartDiv.style.display = "none";
+        }
+
+        cartList.innerHTML = "";
+        cart.forEach((item) => {
+            total += item.price * item.quantity;
+            totalItems += item.quantity;
+            cartList.innerHTML += `
+    <div class="cart-item">
+        <div class="d-flex justify-content-between">
+            <h6 class="mb-1">${item.name} (${item.unit})</h6>
+            <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${item.id})">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="input-group" style="width: 120px;">
+                   <button class="btn btn-outline-secondary btn-sm" onclick="updateQuantity(${item.id}, ${item.quantity - (item.unit === 'unit' ? 1 : 0.01)})">-</button>
+                   <input type="number" class="form-control form-control-sm text-center" value="${item.quantity}" onchange="updateQuantity(${item.id}, parseFloat(this.value))" min="0.1" step="${item.unit === 'unit' ? 1 : 0.01}">
+                   <button class="btn btn-outline-secondary btn-sm" onclick="updateQuantity(${item.id}, ${item.quantity + (item.unit === 'unit' ? 1 : 0.01)})">+</button>
+            </div>
+
+            <strong>£ ${(item.price * item.quantity).toFixed(2)}</strong>
+        </div>
+    </div>
+`;
+        });
+
+        cartTotal.textContent = total.toFixed(2);
+        cartCount.textContent = totalItems;
+
+        localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    }
+
+    function clearCart() {
+        if (confirm("Are you sure you want to clear your cart?")) {
+            cart = [];
+            updateCartDisplay();
+        }
+    }
+
+
+    function checkout() {
+        if (cart.length === 0) {
+            showToast('Your cart is empty!', 'warning');
+            return;
+        }
+
+        const loggedInUser = localStorage.getItem('loggedInUser');
+
+        if (loggedInUser) {
+
+            window.location.href = '/checkout.html';
+        } else {
+
+            showToast('Please login or register to continue.', 'info');
+
+            window.location.href = '/customer-login.html';
+        }
+    }
+
+
+    function updateUserStatus() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        const userStatusElement = document.getElementById('user-status');
+
+        if (loggedInUser) {
+            userStatusElement.innerHTML = '' +
+                '<span class="navbar-text me-2">Welcome, ' + loggedInUser + '!</span>' +
+                '<a class="btn btn-outline-light btn-sm me-2" href="/profile.html">My Profile</a>' +
+                '<a class="btn btn-outline-light btn-sm me-2" href="/order-management.html">My Orders</a>' +
+                '<button class="btn btn-light btn-sm" onclick="logoutCustomer()">Logout</button>';
+        } else {
+            userStatusElement.innerHTML = '<a class="btn btn-outline-light" href="/customer-login.html">Login / Register</a>';
+        }
+    }
+
+
+    function logoutCustomer() {
+        localStorage.removeItem('loggedInUser');
+        updateUserStatus();
+        showToast('You have been logged out.', 'info');
+    }
+
+
+    async function filterByBrand(brandName) {
+        try {
+            const response = await fetch(`/api/products/brand/${encodeURIComponent(brandName)}`);
+
+            // CRITICAL: Check status code explicitly
+            if (!response.ok) {
+                // Log the status, and use it in the error message
+                const errorStatus = response.status;
+                console.error(`HTTP Error Status: ${errorStatus} received for brand filter.`);
+                throw new Error(`Server returned HTTP ${errorStatus}. (Data found but status is incorrect.)`);
+            }
+
+            const products = await response.json();
+            renderProductGrid(products);
+
+            // Show success message only if response.ok is true (status 200-299)
+            showToast(`Successfully filtered products by brand: ${brandName}`, "success");
+
+        } catch (error) {
+            // This 'catch' block runs when response.ok is false or a network issue occurs.
+            console.error("Error filtering products by brand:", error);
+            // Display the detailed error message captured above
+            showToast(`Failed to filter products by brand: ${error.message || 'Check browser console.'}`, "danger");
+        }
+    }
+
+    async function filterByCategory(categoryName) {
+        try {
+            const response = await fetch(`/api/products/category/${encodeURIComponent(categoryName)}`);
+
+            // CRITICAL: Check status code explicitly
+            if (!response.ok) {
+                const errorStatus = response.status;
+                console.error(`HTTP Error Status: ${errorStatus} received for category filter.`);
+                throw new Error(`Server returned HTTP ${errorStatus}. (Data found but status is incorrect.)`);
+            }
+
+            const products = await response.json();
+            renderProductGrid(products);
+
+            // Show success message only if response.ok is true (status 200-299)
+            showToast(`Successfully filtered products by category: ${categoryName}`, "success");
+
+        } catch (error) {
+            console.error("Error filtering products by category:", error);
+            showToast(`Failed to filter products by category: ${error.message || 'Check browser console.'}`, "danger");
+        }
+    }
+
+
+    function attachProductControlListeners(products) {
+        products.forEach(product => {
+            const qtyInput = document.getElementById(`qty-${product.id}`);
+            const unitSelect = document.getElementById(`unit-${product.id}`);
+
+            if (unitSelect && qtyInput) {
+                // Update step when user changes unit
+                unitSelect.addEventListener('change', function () {
+                    if (unitSelect.value === 'unit') {
+                        qtyInput.step = "1";  // pcs must be whole numbers
+                        if (qtyInput.value % 1 !== 0) qtyInput.value = Math.ceil(qtyInput.value);
+                    } else {
+                        qtyInput.step = "0.01"; // fractions allowed
+                    }
+                });
+
+                // Initialize step on page load
+                if (unitSelect.value === 'unit') {
+                    qtyInput.step = "1";
+                    if (qtyInput.value % 1 !== 0) qtyInput.value = Math.ceil(qtyInput.value);
+                } else {
+                    qtyInput.step = "0.01";
+                }
+            }
+        });
+    }
+
+    function renderProductGrid(products) {
+        const grid = document.getElementById("product-grid");
+        grid.innerHTML = ""; // Clear existing grid
+
+        if (products.length === 0) {
+            document.getElementById("no-products").style.display = "block";
+            document.getElementById("product-grid").style.display = "none";
+            return;
+        }
+
+        document.getElementById("no-products").style.display = "none";
+        document.getElementById("product-grid").style.display = "flex";
+
+        products.forEach((product) => {
+            const stockClass = product.quantity < 10 ? "stock-low" : "";
+            const roundedQty = Math.round(product.quantity * 100) / 100;
+            const stockText = product.quantity < 10 ? "Low Stock" : `${roundedQty} in stock`;
+
+            grid.innerHTML += `
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card product-card">
+                <div class="position-relative">
+                    <img src="${product.imageUrl}" class="product-image" alt="${product.name}">
+                    <span class="stock-badge ${stockClass}">${stockText}</span>
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold mb-3">${product.name}</h5>
+                    <div class="price-tag d-inline-block mb-3">£ ${parseFloat(product.price).toFixed(2)}</div>
+
+                    <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                        <input type="number" id="qty-${product.id}" class="form-control form-control-sm text-center" value="1" min="0.1" step="0.1" style="width:70px;">
+                        <select id="unit-${product.id}" class="form-select form-select-sm" style="width:80px;">
+                            <option value="kg">kg</option>
+                            <option value="g">g</option>
+                            <option value="unit">pcs</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-add-cart" onclick="addToCart(${product.id}, '${product.name}', ${product.price})" ${product.quantity === 0 ? "disabled" : ""}>
+                            <i class="bi bi-cart-plus me-2"></i>
+                            ${product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        });
+
+        attachProductControlListeners(products);
+    }
+
+    async function loadBrandsAndCategories() {
+        try {
+            // --- Load Brands ---
+            const brandResponse = await fetch('/api/brands');
+            const brands = await brandResponse.json();
+            const brandSection = document.getElementById('brand-section');
+            brandSection.innerHTML = '';
+
+            brands.forEach(brand => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline-success rounded-pill';
+                btn.innerHTML = `<img src="${brand.imageUrl}" alt="${brand.name}" style="height:40px; width:40px; object-fit:cover; border-radius:50%; margin-right:8px;" class="rounded-circle"> ${brand.name}`;                btn.onclick = () => filterByBrand(brand.name);
+                brandSection.appendChild(btn);
+            });
+
+            // --- Load Categories ---
+            const categoryResponse = await fetch('/api/categories');
+            const categories = await categoryResponse.json();
+            const categorySection = document.getElementById('category-section');
+            categorySection.innerHTML = '';
+
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline-primary rounded-pill';
+                btn.innerHTML = `<img src="${category.imageUrl}" alt="${category.name}" style="height:40px; width:40px; object-fit:cover; border-radius:50%; margin-right:8px;" class="rounded-circle"> ${category.name}`;                btn.onclick = () => filterByCategory(category.name);
+                categorySection.appendChild(btn);
+            });
+
+        } catch (error) {
+            console.error('Error loading brands or categories:', error);
+        }
+    }
+
+    window.onload = function () {
+        displayProducts();
+        updateUserStatus();
+        updateCartDisplay();
+        loadBrandsAndCategories();
+    };
+
+
+</script>
+</body>
+</html>
