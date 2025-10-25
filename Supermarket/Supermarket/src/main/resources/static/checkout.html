@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout - Mathi's Grocery</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3>Checkout - Cash on Delivery</h3>
+                </div>
+                <div class="card-body">
+                    <h4>Your Details</h4>
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="customerName" placeholder="Enter your full name">
+                        <div class="invalid-feedback">Please enter your full name.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Address</label>
+                        <textarea class="form-control" id="customerAddress" rows="3" placeholder="Enter your full address"></textarea>
+                        <div class="invalid-feedback">Please enter your delivery address.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="customerPhone" placeholder="Enter your phone number">
+                        <div class="invalid-feedback">Please enter your phone number.</div>
+                    </div>
+                    <hr>
+                    <h4>Order Summary</h4>
+                    <ul id="order-summary" class="list-group mb-3"></ul>
+                    <h4 class="text-end">Total: £ <span id="total-amount">0.00</span></h4>
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-success btn-lg" onclick="placeOrder()">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    function loadOrderSummary() {
+        const summaryList = document.getElementById('order-summary');
+        const totalAmountEl = document.getElementById('total-amount');
+        let total = 0;
+
+        if (cart.length === 0) {
+            window.location.href = '/index.html';
+            return;
+        }
+
+        cart.forEach(item => {
+            summaryList.innerHTML += `<li class="list-group-item d-flex justify-content-between"><span>${item.name} x ${item.quantity}</span> <span>£ ${(item.price * item.quantity).toFixed(2)}</span></li>`;
+            total += item.price * item.quantity;
+        });
+        totalAmountEl.textContent = total.toFixed(2);
+    }
+
+    async function placeOrder() {
+        const nameInput = document.getElementById('customerName');
+        const addressInput = document.getElementById('customerAddress');
+        const phoneInput = document.getElementById('customerPhone');
+
+        let isValid = true;
+
+        if (!nameInput.value.trim()) {
+            nameInput.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            nameInput.classList.remove('is-invalid');
+        }
+
+        if (!addressInput.value.trim()) {
+            addressInput.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            addressInput.classList.remove('is-invalid');
+        }
+
+        if (!phoneInput.value.trim()) {
+            phoneInput.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            phoneInput.classList.remove('is-invalid');
+        }
+
+        if (!isValid) return;
+
+        // 🔵 Get logged-in username from localStorage
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            alert("You must log in before placing an order.");
+            window.location.href = '/customer-login.html';
+            return;
+        }
+
+        const orderData = {
+            username: loggedInUser, // send username to backend
+            customerName: nameInput.value.trim(),
+            customerAddress: addressInput.value.trim(),
+            customerPhone: phoneInput.value.trim(),
+            cartItems: cart
+        };
+
+        const response = await fetch('/api/orders/place', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        if (response.ok) {
+            alert('Thank you for your order! It has been placed successfully.');
+            localStorage.removeItem('shoppingCart');
+            window.location.href = '/index.html';
+        } else {
+            const error = await response.text();
+            alert(`Failed to place order: ${error}`);
+        }
+    }
+    window.onload = loadOrderSummary;
+</script>
+</body>
+</html>

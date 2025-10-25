@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>View Orders - Admin</title>
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+            rel="stylesheet"
+    />
+    <style>
+        body {
+          background-color: #f8f9fa;
+        }
+        .header-section {
+          background: #6c757d;
+          color: white;
+          padding: 20px 30px;
+        }
+        .card-header strong {
+          font-size: 1.2rem;
+        }
+        .card-footer h4 {
+          margin: 0;
+        }
+        .dropdown-menu {
+          min-width: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="header-section">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="dashboard-title mb-0">
+            <i class="bi bi-box-seam-fill me-2"></i>Customer Orders
+        </h1>
+        <a href="/admin.html" class="btn btn-light"
+        >← Back to Product Dashboard</a
+        >
+    </div>
+</div>
+
+<div class="container-fluid my-4">
+    <div id="orders-container">
+        <div id="loading" class="text-center py-5">
+            <div
+                    class="spinner-border text-success"
+                    style="width: 3rem; height: 3rem"
+                    role="status"
+            >
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading orders...</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    if (sessionStorage.getItem("isAdminLoggedIn") !== "true") {
+      window.location.href = "/login.html";
+    }
+
+    function getStatusBadgeClass(status) {
+      switch (status) {
+        case "NEW":
+          return "bg-danger";
+        case "PROCESSING":
+          return "bg-warning text-dark";
+        case "SHIPPED":
+          return "bg-success";
+        case "DELIVERED":
+          return "bg-primary";
+        case "CANCELLED":
+          return "bg-secondary";
+        default:
+          return "bg-light text-dark";
+      }
+    }
+
+    async function loadOrders() {
+      try {
+        const response = await fetch("/api/orders");
+        if (!response.ok) throw new Error("Network error");
+        const orders = await response.json();
+        const container = document.getElementById("orders-container");
+        document.getElementById("loading").style.display = "none";
+        container.innerHTML = "";
+
+        if (orders.length === 0) {
+          container.innerHTML =
+            '<div class="alert alert-info">No orders have been placed yet.</div>';
+          return;
+        }
+
+        orders.forEach((order) => {
+          let itemsHtml = '<ul class="list-group list-group-flush">';
+          order.orderItems.forEach((item) => {
+            const productName = item.product
+              ? item.product.name
+              : "Product not found";
+            itemsHtml += `<li class="list-group-item">${productName} - Qty: ${
+              item.quantity
+            } (at £ ${item.price.toFixed(2)} each)</li>`;
+          });
+          itemsHtml += "</ul>";
+
+          container.innerHTML += `
+                  <div class="card mb-3 shadow-sm" id="order-card-${
+                    order.id
+                  }">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                          <strong>Order #${order.id}</strong>
+                          <div class="d-flex align-items-center">
+                              <span class="me-3 text-muted small">Date: ${new Date(
+                                order.orderDate
+                              ).toLocaleString()}</span>
+                              <div class="dropdown">
+                                  <button class="btn btn-sm dropdown-toggle ${getStatusBadgeClass(
+                                    order.status
+                                  )}" type="button" data-bs-toggle="dropdown">
+                                      ${order.status || "PENDING"}
+                                  </button>
+                                  <ul class="dropdown-menu">
+                                      <li><a class="dropdown-item" href="#" onclick="updateStatus(${
+                                        order.id
+                                      }, 'PROCESSING')">Processing</a></li>
+                                      <li><a class="dropdown-item" href="#" onclick="updateStatus(${
+                                        order.id
+                                      }, 'SHIPPED')">Shipped</a></li>
+                                      <li><a class="dropdown-item" href="#" onclick="updateStatus(${
+                                        order.id
+                                      }, 'DELIVERED')">Delivered</a></li>
+                                      <li><hr class="dropdown-divider"></li>
+                                      <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus(${
+                                        order.id
+                                      }, 'CANCELLED')">Cancelled</a></li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-6">
+                                  <h5>Customer Details:</h5>
+                                  <p class="mb-1"><strong>Name:</strong> ${
+                                    order.customerName
+                                  }</p>
+                                  <p class="mb-1"><strong>Address:</strong> ${
+                                    order.customerAddress
+                                  }</p>
+                                  <p class="mb-1"><strong>Phone:</strong> ${
+                                    order.customerPhone
+                                  }</p>
+                              </div>
+                              <div class="col-md-6">
+                                  <h5>Items Ordered:</h5>
+                                  ${itemsHtml}
+                              </div>
+                          </div>
+                      </div>
+                      <div class="card-footer text-end bg-light">
+                          <h4>Total: £ ${order.totalAmount.toFixed(2)}</h4>
+                      </div>
+                  </div>`;
+        });
+      } catch (error) {
+        console.error("Failed to load orders:", error);
+        document.getElementById("orders-container").innerHTML =
+          '<div class="alert alert-danger">Failed to load orders. Please try again.</div>';
+      }
+    }
+
+    async function updateStatus(orderId, newStatus) {
+      try {
+        const response = await fetch(`/api/orders/${orderId}/status`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (response.ok) {
+          const updatedOrder = await response.json();
+
+          const orderCard = document.getElementById(`order-card-${orderId}`);
+          if (orderCard) {
+            const dropdownButton =
+              orderCard.querySelector(".dropdown-toggle");
+
+            dropdownButton.textContent = updatedOrder.status;
+            dropdownButton.className = `btn btn-sm dropdown-toggle ${getStatusBadgeClass(
+              updatedOrder.status
+            )}`;
+          }
+        } else {
+          alert("Failed to update status.");
+        }
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alert("An error occurred.");
+      }
+    }
+
+    window.onload = async function () {
+      try {
+        await fetch("/api/orders/mark-as-processing", { method: "POST" });
+        await loadOrders();
+      } catch (error) {
+        console.error("Error during page load:", error);
+        document.getElementById("orders-container").innerHTML =
+          '<div class="alert alert-danger">An error occurred. Please try refreshing the page.</div>';
+      }
+    };
+</script>
+</body>
+</html>

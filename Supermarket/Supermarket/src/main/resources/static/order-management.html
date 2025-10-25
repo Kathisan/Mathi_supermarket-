@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .header-section { background: #28a745; color: white; padding: 20px 30px; }
+    </style>
+</head>
+<body>
+<div class="header-section">
+    <h1><i class="bi bi-bag-check-fill me-2"></i>My Orders</h1>
+    <a href="/index.html" class="btn btn-light btn-sm">← Back to Home</a>
+</div>
+
+<div class="container mt-4">
+    <div id="orders-container">
+        <!-- Orders will be loaded here -->
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (!loggedInUser) {
+        alert('Please login to view your orders.');
+        window.location.href = '/customer-login.html';
+    }
+
+    async function loadOrders() {
+        try {
+            const response = await fetch(`/api/orders/user?username=${loggedInUser}`);
+            if (!response.ok) throw new Error('API error');
+            const orders = await response.json();
+            const container = document.getElementById('orders-container');
+            container.innerHTML = '';
+
+            if (!orders || orders.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No orders found.</div>';
+                return;
+            }
+
+            orders.forEach(order => {
+                const status = order.status ? order.status.toUpperCase() : 'UNKNOWN';
+                const orderDate = new Date(order.orderDate).toLocaleString(); // show date
+
+                // Map each order item with quantity + unit + price
+                const itemsHtml = order.orderItems.map(i => {
+                    const quantity = i.quantity ?? 0;
+                    const unit = i.unit ?? '';
+                    const price = i.price ?? 0;
+                    return `<div class="border p-2 mb-1 rounded bg-light">
+                        <strong>${i.product.name}</strong> - ${quantity} ${unit} (£${price.toFixed(2)})
+                    </div>`;
+                }).join('');
+
+                // Cancel button allowed only if NEW or PROCESSING
+                const cancelBtn = (status === 'NEW' || status === 'PROCESSING')
+                    ? `<button class="btn btn-danger btn-sm mt-2" onclick="cancelOrder(${order.id})">
+                        <i class="bi bi-x-circle"></i> Cancel Order
+                       </button>`
+                    : '';
+
+                container.innerHTML += `
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <strong>Order #${order.id}</strong> - Status: ${status} - Date: ${orderDate}
+                </div>
+                <div class="card-body">
+                    ${itemsHtml}
+                    ${cancelBtn}
+                </div>
+                <div class="card-footer">
+                    <strong>Total: £${order.totalAmount.toFixed(2)}</strong>
+                </div>
+            </div>`;
+            });
+        } catch (error) {
+            console.error(error);
+            alert('Failed to load orders.');
+        }
+    }
+
+    async function cancelOrder(orderId) {
+        if (!confirm('Are you sure you want to cancel this order?')) return;
+        try {
+            const response = await fetch(`/api/orders/user/cancel/${orderId}?username=${loggedInUser}`, { method: 'PUT' });
+            if (!response.ok) throw new Error('Cancel failed');
+            alert('Order cancelled successfully.');
+            loadOrders();
+        } catch (error) {
+            console.error(error);
+            alert('Failed to cancel order.');
+        }
+    }
+
+    window.onload = loadOrders;
+</script>
+
+</body>
+</html>
