@@ -79,4 +79,10 @@ public class Product {
 
     public String getUnit() { return unit; } // New
     public void setUnit(String unit) { this.unit = unit; }
+
+    public Brand getBrand() { return brand; }
+    public void setBrand(Brand brand) { this.brand = brand; }
+
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
 }
