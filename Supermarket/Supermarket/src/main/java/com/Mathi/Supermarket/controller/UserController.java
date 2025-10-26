@@ -18,6 +18,7 @@ public class UserController {
 
     // --- Customer Registration & Login ---
 
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         if (userService.isUsernameTaken(user.getUsername())) {
