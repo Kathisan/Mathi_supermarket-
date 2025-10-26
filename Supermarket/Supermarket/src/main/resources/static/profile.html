@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <title>My Profile - Mathi's Grocery</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #28a745;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        .profile-picture-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body class="bg-light">
 <div class="container mt-5">
@@ -14,6 +39,21 @@
                     <h3>My Profile</h3>
                 </div>
                 <div class="card-body">
+                    <!-- Profile Picture Section -->
+                    <div class="profile-picture-container">
+                        <img id="profilePicture" class="profile-picture" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjMwIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0zMCAxMjBMMTIwIDEyMEMxMjAgMTAwIDk1IDkwIDc1IDkwQzU1IDkwIDMwIDEwMCAzMCAxMjBaIiBmaWxsPSIjQ0NDIi8+Cjwvc3ZnPgo=" alt="Profile Picture">
+                        <div class="profile-actions">
+                            <input type="file" id="profilePictureInput" accept="image/*" style="display: none;" onchange="uploadProfilePicture()">
+                            <button class="btn btn-outline-primary btn-sm" onclick="document.getElementById('profilePictureInput').click()">
+                                <i class="bi bi-upload me-1"></i>Upload
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteProfilePicture()">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Profile Information Section -->
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" placeholder="New username">
@@ -27,12 +67,44 @@
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" placeholder="Your email">
-                        <div class="invalid-feedback">Please enter your email.</div>
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">New Password (Optional)</label>
-                        <input type="password" class="form-control" id="password" placeholder="Leave blank to keep current password">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phoneNumber" placeholder="Your phone number" maxlength="10">
+                        <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" id="address" placeholder="Your address" style="height: 80px;"></textarea>
+                        <div class="invalid-feedback">Please enter your address.</div>
+                    </div>
+
+                    <!-- Change Password Section -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">Change Password</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
+                                <div class="invalid-feedback">Please enter your current password.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
+                                <div class="invalid-feedback">Please enter a new password.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+                                <div class="invalid-feedback">Passwords do not match.</div>
+                            </div>
+                            <button class="btn btn-warning btn-sm" onclick="changePassword()">Change Password</button>
+                        </div>
+                    </div>
+
                     <button class="btn btn-success" onclick="updateProfile()">Update Profile</button>
                     <a href="/" class="btn btn-secondary">Back to Shop</a>
                 </div>
@@ -47,6 +119,55 @@
         window.location.href = '/customer-login.html';
     }
 
+    // Load profile picture from local storage
+    function loadProfilePicture() {
+        const savedPicture = localStorage.getItem(`profilePicture_${loggedInUser}`);
+        if (savedPicture) {
+            document.getElementById('profilePicture').src = savedPicture;
+        }
+    }
+
+    // Upload profile picture
+    function uploadProfilePicture() {
+        const fileInput = document.getElementById('profilePictureInput');
+        const file = fileInput.files[0];
+
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File size must be less than 2MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                // Save to local storage
+                localStorage.setItem(`profilePicture_${loggedInUser}`, imageData);
+                // Update profile picture display
+                document.getElementById('profilePicture').src = imageData;
+                alert('Profile picture updated successfully!');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Delete profile picture
+    function deleteProfilePicture() {
+        if (confirm('Are you sure you want to delete your profile picture?')) {
+            localStorage.removeItem(`profilePicture_${loggedInUser}`);
+            // Reset to default avatar
+            document.getElementById('profilePicture').src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjMwIiBmaWxsPSIjQ0NDIi8+CjxwYXRoIGQ9Ik0zMCAxMjBMMTIwIDEyMEMxMjAgMTAwIDk1IDkwIDc1IDkwQzU1IDkwIDMwIDEwMCAzMCAxMjBaIiBmaWxsPSIjQ0NDIi8+Cjwvc3ZnPgo=";
+            alert('Profile picture deleted successfully!');
+        }
+    }
+
     async function loadProfile() {
         const response = await fetch(`/api/users/profile/${loggedInUser}`);
         if (response.ok) {
@@ -54,49 +175,75 @@
             document.getElementById('username').value = user.username;
             document.getElementById('fullName').value = user.fullName || '';
             document.getElementById('email').value = user.email || '';
+            document.getElementById('phoneNumber').value = user.phoneNumber || '';
+            document.getElementById('address').value = user.address || '';
         }
+        loadProfilePicture();
     }
 
     async function updateProfile() {
         const usernameInput = document.getElementById('username');
         const fullNameInput = document.getElementById('fullName');
         const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
+        const phoneInput = document.getElementById('phoneNumber');
+        const addressInput = document.getElementById('address');
 
         let isValid = true;
+
+        // Clear previous validation states
+        usernameInput.classList.remove('is-invalid');
+        fullNameInput.classList.remove('is-invalid');
+        emailInput.classList.remove('is-invalid');
+        phoneInput.classList.remove('is-invalid');
+        addressInput.classList.remove('is-invalid');
 
         // Check username
         if (!usernameInput.value.trim()) {
             usernameInput.classList.add('is-invalid');
             isValid = false;
-        } else {
-            usernameInput.classList.remove('is-invalid');
         }
 
         // Check full name
         if (!fullNameInput.value.trim()) {
             fullNameInput.classList.add('is-invalid');
             isValid = false;
-        } else {
-            fullNameInput.classList.remove('is-invalid');
         }
 
         // Check email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailInput.value.trim()) {
             emailInput.classList.add('is-invalid');
             isValid = false;
-        } else {
-            emailInput.classList.remove('is-invalid');
+        } else if (!emailRegex.test(emailInput.value.trim())) {
+            emailInput.classList.add('is-invalid');
+            isValid = false;
         }
 
-        if (!isValid) return; // Stop if any required field is empty
+        // Check phone number
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phoneInput.value.trim()) {
+            phoneInput.classList.add('is-invalid');
+            isValid = false;
+        } else if (!phoneRegex.test(phoneInput.value.trim())) {
+            phoneInput.classList.add('is-invalid');
+            isValid = false;
+        }
+
+        // Check address
+        if (!addressInput.value.trim()) {
+            addressInput.classList.add('is-invalid');
+            isValid = false;
+        }
+
+        if (!isValid) return; // Stop if any required field is empty or invalid
 
         // Prepare updated details
         const updatedDetails = {
             username: usernameInput.value.trim(),
             fullName: fullNameInput.value.trim(),
             email: emailInput.value.trim(),
-            password: passwordInput.value // optional
+            phoneNumber: phoneInput.value.trim(),
+            address: addressInput.value.trim()
         };
         const response = await fetch(`/api/users/profile/${loggedInUser}`, {
             method: 'PUT',
@@ -110,6 +257,123 @@
             alert('Failed to update profile.');
         }
     }
+
+    async function changePassword() {
+        const currentPasswordInput = document.getElementById('currentPassword');
+        const newPasswordInput = document.getElementById('newPassword');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+
+        let isValid = true;
+
+        // Clear previous validation states
+        currentPasswordInput.classList.remove('is-invalid');
+        newPasswordInput.classList.remove('is-invalid');
+        confirmPasswordInput.classList.remove('is-invalid');
+
+        // Check current password
+        if (!currentPasswordInput.value.trim()) {
+            currentPasswordInput.classList.add('is-invalid');
+            isValid = false;
+        }
+
+        // Check new password
+        if (!newPasswordInput.value.trim()) {
+            newPasswordInput.classList.add('is-invalid');
+            isValid = false;
+        } else if (newPasswordInput.value.length < 6) {
+            newPasswordInput.classList.add('is-invalid');
+            newPasswordInput.nextElementSibling.textContent = 'Password must be at least 6 characters long.';
+            isValid = false;
+        }
+
+        // Check password confirmation
+        if (!confirmPasswordInput.value.trim()) {
+            confirmPasswordInput.classList.add('is-invalid');
+            isValid = false;
+        } else if (confirmPasswordInput.value !== newPasswordInput.value) {
+            confirmPasswordInput.classList.add('is-invalid');
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        try {
+            const response = await fetch('/api/users/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: loggedInUser,
+                    currentPassword: currentPasswordInput.value,
+                    newPassword: newPasswordInput.value
+                })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                // Clear password fields
+                currentPasswordInput.value = '';
+                newPasswordInput.value = '';
+                confirmPasswordInput.value = '';
+            } else {
+                alert(data.message || 'Failed to change password.');
+            }
+        } catch (error) {
+            alert('Error changing password. Please try again.');
+        }
+    }
+
+    // Real-time validation functions for profile page
+    function validateProfileEmail() {
+        const emailInput = document.getElementById('email');
+        const value = emailInput.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (value.length > 0 && emailRegex.test(value)) {
+            emailInput.classList.add('is-valid');
+            emailInput.classList.remove('is-invalid');
+        } else if (value.length > 0) {
+            emailInput.classList.add('is-invalid');
+            emailInput.classList.remove('is-valid');
+        } else {
+            emailInput.classList.remove('is-valid', 'is-invalid');
+        }
+    }
+
+    function validateProfilePhone() {
+        const phoneInput = document.getElementById('phoneNumber');
+        const value = phoneInput.value;
+        const phoneRegex = /^[0-9]{10}$/;
+        if (value.length === 10 && phoneRegex.test(value)) {
+            phoneInput.classList.add('is-valid');
+            phoneInput.classList.remove('is-invalid');
+        } else if (value.length > 0) {
+            phoneInput.classList.add('is-invalid');
+            phoneInput.classList.remove('is-valid');
+        } else {
+            phoneInput.classList.remove('is-valid', 'is-invalid');
+        }
+    }
+
+    function validateProfileAddress() {
+        const addressInput = document.getElementById('address');
+        const value = addressInput.value;
+        if (value.trim().length > 0) {
+            addressInput.classList.add('is-valid');
+            addressInput.classList.remove('is-invalid');
+        } else {
+            addressInput.classList.remove('is-valid', 'is-invalid');
+        }
+    }
+
+    // Add event listeners for real-time validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Profile page validation
+        if (document.getElementById('email')) {
+            document.getElementById('email').addEventListener('input', validateProfileEmail);
+            document.getElementById('phoneNumber').addEventListener('input', validateProfilePhone);
+            document.getElementById('address').addEventListener('input', validateProfileAddress);
+        }
+    });
 
     window.onload = loadProfile;
 </script>

@@ -23,7 +23,7 @@
       background: white;
       border-radius: 15px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      max-width: 500px;
+      max-width: 600px;
       width: 100%;
     }
     .nav-pills .nav-link.active {
@@ -102,9 +102,42 @@
                 class="form-control"
                 id="regUsername"
                 placeholder="Username"
+                maxlength="16"
         />
         <label>Username</label>
-        <div class="invalid-feedback">Please enter your username.</div>
+        <div class="invalid-feedback">Username must be between 1-16 characters.</div>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+                type="tel"
+                class="form-control"
+                id="regPhoneNumber"
+                placeholder="Phone Number"
+                pattern="[0-9]{10}"
+                maxlength="10"
+        />
+        <label>Phone Number</label>
+        <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+                type="email"
+                class="form-control"
+                id="regEmail"
+                placeholder="Email"
+        />
+        <label>Email Address</label>
+        <div class="invalid-feedback">Please enter a valid email address.</div>
+      </div>
+      <div class="form-floating mb-3">
+                <textarea
+                        class="form-control"
+                        id="regAddress"
+                        placeholder="Address"
+                        style="height: 80px;"
+                ></textarea>
+        <label>Home Address</label>
+        <div class="invalid-feedback">Please enter your address.</div>
       </div>
       <div class="form-floating mb-3">
         <input
@@ -165,31 +198,85 @@
 <script>
   async function register() {
     const username = document.getElementById("regUsername").value;
+    const phoneNumber = document.getElementById("regPhoneNumber").value;
+    const email = document.getElementById("regEmail").value;
+    const address = document.getElementById("regAddress").value;
     const password = document.getElementById("regPassword").value;
 
     let isValid = true;
     const usernameInput = document.getElementById("regUsername");
+    const phoneInput = document.getElementById("regPhoneNumber");
+    const emailInput = document.getElementById("regEmail");
+    const addressInput = document.getElementById("regAddress");
     const passwordInput = document.getElementById("regPassword");
 
-    if (!usernameInput.value.trim()) { usernameInput.classList.add('is-invalid'); isValid = false; }
-    else usernameInput.classList.remove('is-invalid');
+    // Username validation (1-16 characters)
+    if (!username.trim() || username.length > 16) {
+      usernameInput.classList.add('is-invalid');
+      isValid = false;
+    } else {
+      usernameInput.classList.remove('is-invalid');
+    }
 
-    if (!passwordInput.value.trim()) { passwordInput.classList.add('is-invalid'); isValid = false; }
-    else passwordInput.classList.remove('is-invalid');
+    // Phone number validation (exactly 10 digits)
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneNumber.trim() || !phoneRegex.test(phoneNumber)) {
+      phoneInput.classList.add('is-invalid');
+      isValid = false;
+    } else {
+      phoneInput.classList.remove('is-invalid');
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim() || !emailRegex.test(email)) {
+      emailInput.classList.add('is-invalid');
+      isValid = false;
+    } else {
+      emailInput.classList.remove('is-invalid');
+    }
+
+    // Address validation
+    if (!address.trim()) {
+      addressInput.classList.add('is-invalid');
+      isValid = false;
+    } else {
+      addressInput.classList.remove('is-invalid');
+    }
+
+    // Password validation
+    if (!password.trim()) {
+      passwordInput.classList.add('is-invalid');
+      isValid = false;
+    } else {
+      passwordInput.classList.remove('is-invalid');
+    }
 
     if (!isValid) return;
-
 
     const response = await fetch("/api/users/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({
+        username,
+        phoneNumber,
+        email,
+        address,
+        password,
+        fullName: username // Using username as fullName for now
+      }),
     });
     const data = await response.json();
     alert(data.message);
     if (response.ok) {
       // Switch to login tab after successful registration
       document.getElementById("pills-login-tab").click();
+      // Clear form fields
+      document.getElementById("regUsername").value = "";
+      document.getElementById("regPhoneNumber").value = "";
+      document.getElementById("regEmail").value = "";
+      document.getElementById("regAddress").value = "";
+      document.getElementById("regPassword").value = "";
     }
   }
 
@@ -256,6 +343,82 @@
       document.getElementById("pills-login-tab").click();
     }
   }
+
+  // Real-time validation functions
+  function validateUsername() {
+    const usernameInput = document.getElementById("regUsername");
+    const value = usernameInput.value;
+    if (value.length > 16) {
+      usernameInput.classList.add('is-invalid');
+      usernameInput.classList.remove('is-valid');
+    } else if (value.length > 0) {
+      usernameInput.classList.add('is-valid');
+      usernameInput.classList.remove('is-invalid');
+    } else {
+      usernameInput.classList.remove('is-valid', 'is-invalid');
+    }
+  }
+
+  function validatePhone() {
+    const phoneInput = document.getElementById("regPhoneNumber");
+    const value = phoneInput.value;
+    const phoneRegex = /^[0-9]{10}$/;
+    if (value.length === 10 && phoneRegex.test(value)) {
+      phoneInput.classList.add('is-valid');
+      phoneInput.classList.remove('is-invalid');
+    } else if (value.length > 0) {
+      phoneInput.classList.add('is-invalid');
+      phoneInput.classList.remove('is-valid');
+    } else {
+      phoneInput.classList.remove('is-valid', 'is-invalid');
+    }
+  }
+
+  function validateEmail() {
+    const emailInput = document.getElementById("regEmail");
+    const value = emailInput.value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (value.length > 0 && emailRegex.test(value)) {
+      emailInput.classList.add('is-valid');
+      emailInput.classList.remove('is-invalid');
+    } else if (value.length > 0) {
+      emailInput.classList.add('is-invalid');
+      emailInput.classList.remove('is-valid');
+    } else {
+      emailInput.classList.remove('is-valid', 'is-invalid');
+    }
+  }
+
+  function validateAddress() {
+    const addressInput = document.getElementById("regAddress");
+    const value = addressInput.value;
+    if (value.trim().length > 0) {
+      addressInput.classList.add('is-valid');
+      addressInput.classList.remove('is-invalid');
+    } else {
+      addressInput.classList.remove('is-valid', 'is-invalid');
+    }
+  }
+
+  function validatePassword() {
+    const passwordInput = document.getElementById("regPassword");
+    const value = passwordInput.value;
+    if (value.length > 0) {
+      passwordInput.classList.add('is-valid');
+      passwordInput.classList.remove('is-invalid');
+    } else {
+      passwordInput.classList.remove('is-valid', 'is-invalid');
+    }
+  }
+
+  // Add event listeners for real-time validation
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById("regUsername").addEventListener('input', validateUsername);
+    document.getElementById("regPhoneNumber").addEventListener('input', validatePhone);
+    document.getElementById("regEmail").addEventListener('input', validateEmail);
+    document.getElementById("regAddress").addEventListener('input', validateAddress);
+    document.getElementById("regPassword").addEventListener('input', validatePassword);
+  });
 </script>
 </body>
 </html>

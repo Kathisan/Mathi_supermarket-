@@ -1,6 +1,5 @@
 package com.Mathi.Supermarket.controller;
 
-
 import com.Mathi.Supermarket.model.User;
 import com.Mathi.Supermarket.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -18,23 +16,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/profile/{username}")
-    public ResponseEntity<?> getUserDetails(@PathVariable String username) {
-        return userService.getUserByUsername(username)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-
-    @PutMapping("/profile/{username}")
-    public ResponseEntity<?> updateUser(@PathVariable String username, @RequestBody User userDetails) {
-        try {
-            User updatedUser = userService.updateUser(username, userDetails);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    // --- Customer Registration & Login ---
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
@@ -71,6 +53,43 @@ public class UserController {
         }
     }
 
+    // --- Change Password ---
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        String currentPassword = request.get("currentPassword");
+        String newPassword = request.get("newPassword");
+
+        boolean success = userService.changePassword(username, currentPassword, newPassword);
+        if (success) {
+            return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
+        } else {
+            return ResponseEntity.status(400).body(Map.of("message", "Invalid current password"));
+        }
+    }
+
+    // --- Profile Management ---
+
+
+    @GetMapping("/profile/{username}")
+    public ResponseEntity<?> getUserDetails(@PathVariable String username) {
+        return userService.getUserByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+    @PutMapping("/profile/{username}")
+    public ResponseEntity<?> updateUser(@PathVariable String username, @RequestBody User userDetails) {
+        try {
+            User updatedUser = userService.updateUser(username, userDetails);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // --- Admin User Management ---
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -82,5 +101,4 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.ok().body(Map.of("message", "User deleted successfully"));
     }
-
 }
