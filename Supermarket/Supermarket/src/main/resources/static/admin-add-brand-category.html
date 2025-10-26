@@ -5,7 +5,6 @@
     <title>Add Brand & Category</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* ⭐ NEW CSS FOR BOTTOM-RIGHT BUTTON ⭐ */
         #back-to-dashboard-btn {
             position: fixed;
             bottom: 30px;
@@ -18,29 +17,41 @@
 <body>
 <div class="container mt-5">
     <h2>Add Brand & Category</h2>
+
+    <!-- ✅ Form allows empty brand/category -->
     <form action="/admin/add-brand-category" method="post" enctype="multipart/form-data">
         <div class="mb-3">
             <label>Brand Name</label>
-            <input type="text" name="brandName" class="form-control" required>
+            <!-- 🔹 Removed required + added placeholder -->
+            <input type="text" name="brandName" class="form-control" placeholder="Enter brand name (optional)">
         </div>
+
         <div class="mb-3">
             <label>Brand Image</label>
             <input type="file" name="brandImage" class="form-control" accept="image/*">
         </div>
+
+        <hr> <!-- 🧩 Divider between sections -->
+
         <div class="mb-3">
             <label>Category Name</label>
-            <input type="text" name="categoryName" class="form-control" required>
+            <!-- 🔹 Removed required + added placeholder -->
+            <input type="text" name="categoryName" class="form-control" placeholder="Enter category name (optional)">
         </div>
+
         <div class="mb-3">
             <label>Category Image</label>
             <input type="file" name="categoryImage" class="form-control" accept="image/*">
         </div>
+
         <button type="submit" class="btn btn-success">Add</button>
     </form>
 </div>
 
+<!-- Back Button -->
 <a href="/admin.html" class="btn btn-secondary btn-lg" id="back-to-dashboard-btn">
     <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
 </a>
+
 </body>
 </html>
