@@ -63,11 +63,7 @@ public class ProductController {
         return saved;
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-    }
-
+    
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
         return productService.updateProduct(id, productDetails);

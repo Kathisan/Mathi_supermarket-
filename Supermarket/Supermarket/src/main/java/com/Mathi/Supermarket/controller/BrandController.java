@@ -15,8 +15,7 @@ public class BrandController {
 
     @Autowired
     private BrandRepository brandRepository;
-    @DeleteMapping private("/{id}")
-    public void deletebrand (@PathVariable long id);
+
     @Autowired
     private FileStorageService fileStorageService;
 

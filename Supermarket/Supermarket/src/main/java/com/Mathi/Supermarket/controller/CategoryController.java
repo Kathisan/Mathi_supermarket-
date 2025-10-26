@@ -18,6 +18,7 @@ public class CategoryController {
     @Autowired
     private FileStorageService fileStorageService;
 
+
     @GetMapping
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
