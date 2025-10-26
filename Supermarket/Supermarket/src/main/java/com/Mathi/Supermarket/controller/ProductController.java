@@ -79,15 +79,7 @@ public class ProductController {
         return productService.searchProducts(query);
     }
 
-    @GetMapping("/alerts/lowstock")
-    public List<Product> getLowStockProducts() {
-        return productService.getLowStockProducts();
-    }
-
-    @GetMapping("/alerts/expiringsoon")
-    public List<Product> getExpiringSoonProducts() {
-        return productService.getExpiringSoonProducts();
-    }
+   
 
     @GetMapping("/brand/{brand}")
     public List<Product> getProductsByBrand(@PathVariable("brand") String brandName) {
