@@ -29,8 +29,7 @@ public class AdminPageController {
     // Handle form submission
     @PostMapping("/admin/add-brand-category")
     public String addBrandCategory(
-            @RequestParam(required = false) String brandName,
-            @RequestParam(required = false) String categoryName,
+         
             @RequestParam(required = false) MultipartFile brandImage,
             @RequestParam(required = false) MultipartFile categoryImage
     ) throws IOException {
@@ -58,7 +57,7 @@ public class AdminPageController {
             category.setName(categoryName.trim());
 
             // Save category image only if uploaded
-          
+
 
             categoryRepository.save(category);
         }
