@@ -23,10 +23,7 @@ public class ProductService {
     private BrandRepository brandRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
+    
 
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElse(null);
