@@ -26,6 +26,7 @@ public class OrderService {
 
     @Transactional
     public CustomerOrder placeOrder(Map<String, Object> orderData, User user) {
+
         CustomerOrder order = new CustomerOrder();
         order.setCustomerName((String) orderData.get("customerName"));
         order.setCustomerAddress((String) orderData.get("customerAddress"));
@@ -115,10 +116,20 @@ public class OrderService {
 
         String oldStatus = order.getStatus();
 
+
+        if (newStatus.equals("CANCELLED") && !oldStatus.equals("CANCELLED")) {
+            for (OrderItem item : order.getOrderItems()) {
+                Product product = item.getProduct();
+                if (product != null) {
+                    product.setQuantity(product.getQuantity() + item.getQuantity());
+                    productRepository.save(product);
+                }
+            }
+        }
+
         order.setStatus(newStatus);
         return orderRepository.saveAndFlush(order);
     }
-
 
     public List<CustomerOrder> getOrdersByUser(User user) {
         return orderRepository.findByUserOrderByIdDesc(user); // Requires repository method
