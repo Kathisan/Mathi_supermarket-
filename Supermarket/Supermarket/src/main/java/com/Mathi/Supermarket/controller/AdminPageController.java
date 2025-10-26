@@ -35,10 +35,9 @@ public class AdminPageController {
             @RequestParam(required = false) MultipartFile categoryImage
     ) throws IOException {
 
-        // Save Brand
-        if (brandName != null && !brandName.isEmpty()) {
+        if (brandName != null && !brandName.trim().isEmpty()) {
             Brand brand = new Brand();
-            brand.setName(brandName);
+            brand.setName(brandName.trim());
 
             if (brandImage != null && !brandImage.isEmpty()) {
                 String fileName = System.currentTimeMillis() + "_" + brandImage.getOriginalFilename();
@@ -51,10 +50,10 @@ public class AdminPageController {
             brandRepository.save(brand);
         }
 
-        // Save Category
-        if (categoryName != null && !categoryName.isEmpty()) {
+        if (categoryName != null && !categoryName.trim().isEmpty()) {
             Category category = new Category();
-            category.setName(categoryName);
+            category.setName(categoryName.trim());
+
 
             if (categoryImage != null && !categoryImage.isEmpty()) {
                 String fileName = System.currentTimeMillis() + "_" + categoryImage.getOriginalFilename();
@@ -66,7 +65,6 @@ public class AdminPageController {
 
             categoryRepository.save(category);
         }
-
         // Redirect back to the static HTML page
         return "redirect:/admin-add-brand-category.html";
     }
