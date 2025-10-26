@@ -29,7 +29,13 @@ public class OrderController {
         try {
             // Get username from frontend JSON
             String username = (String) orderData.get("username");
-            
+            if (username == null) {
+                return ResponseEntity.badRequest().body("Username is required. Please log in first.");
+            }
+
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
             CustomerOrder newOrder = orderService.placeOrder(orderData, user);
             return ResponseEntity.ok(newOrder);
         } catch (RuntimeException e) {
