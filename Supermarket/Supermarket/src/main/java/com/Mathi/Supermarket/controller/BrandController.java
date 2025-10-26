@@ -15,14 +15,12 @@ public class BrandController {
 
     @Autowired
     private BrandRepository brandRepository;
-
+    @DeleteMapping private("/{id}")
+    public void deletebrand (@PathVariable long id);
     @Autowired
     private FileStorageService fileStorageService;
 
     @GetMapping
-    public List<Brand> getAllBrands() {
-        return brandRepository.findAll();
-    }
 
     @PostMapping("/add")
     public Brand addBrand(@RequestParam("name") String name,
@@ -35,9 +33,6 @@ public class BrandController {
         brand.setImageUrl("/uploads/" + fileName);
 
         return brandRepository.save(brand);
-        @Autowired
-                private {/id}=null;
-        delete
     }
 }
 
