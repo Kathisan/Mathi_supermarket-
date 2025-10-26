@@ -36,6 +36,7 @@ public class UserController {
         }
     }
 
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         if (userService.isUsernameTaken(user.getUsername())) {
@@ -77,10 +78,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok().body(Map.of("message", "User deleted successfully"));
+    
     }
 
 }
