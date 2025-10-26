@@ -62,13 +62,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<Product> getExpiringSoonProducts() {
-        LocalDate thirtyDaysFromNow = LocalDate.now().plusDays(30);
-        return productRepository.findAll().stream()
-                .filter(product -> product.getExpiryDate() != null &&
-                        product.getExpiryDate().isBefore(thirtyDaysFromNow))
-                .collect(Collectors.toList());
-    }
+   
 
     public Product addProduct(Product product, Long brandId, Long categoryId) {
 
