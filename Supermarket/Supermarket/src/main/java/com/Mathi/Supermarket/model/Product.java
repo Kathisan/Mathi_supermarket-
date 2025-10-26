@@ -77,7 +77,8 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-  
+    public String getUnit() { return unit; } // New
+    public void setUnit(String unit) { this.unit = unit; }
 
     public Brand getBrand() { return brand; }
     public void setBrand(Brand brand) { this.brand = brand; }
