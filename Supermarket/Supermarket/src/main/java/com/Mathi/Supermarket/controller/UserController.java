@@ -55,19 +55,7 @@ public class UserController {
     }
 
     // --- Change Password ---
-    @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
-        String currentPassword = request.get("currentPassword");
-        String newPassword = request.get("newPassword");
-
-        boolean success = userService.changePassword(username, currentPassword, newPassword);
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
-        } else {
-            return ResponseEntity.status(400).body(Map.of("message", "Invalid current password"));
-        }
-    }
+    
 
     // --- Profile Management ---
 
