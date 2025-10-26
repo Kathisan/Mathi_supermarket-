@@ -148,14 +148,6 @@ public class OrderService {
             throw new RuntimeException("Completed orders cannot be cancelled");
         }
 
-        for (OrderItem item : order.getOrderItems()) {
-            Product product = item.getProduct();
-            if (product != null) {
-                product.setQuantity(product.getQuantity() + item.getQuantity());
-                productRepository.save(product);
-            }
-        }
-
         order.setStatus("CANCELLED");
         return orderRepository.saveAndFlush(order);
     }
