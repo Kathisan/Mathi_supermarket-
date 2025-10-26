@@ -37,7 +37,7 @@ public class ProductController {
     @PostMapping("/add")
     public Product addProduct(
             @RequestParam("name") String name,
-            
+            @RequestParam("price") double price,
             @RequestParam("quantity") double quantity,
             @RequestParam("unit") String unit,
             @RequestParam("brandId") Long brandId,
