@@ -35,6 +35,9 @@ public class BrandController {
         brand.setImageUrl("/uploads/" + fileName);
 
         return brandRepository.save(brand);
+        @Autowired
+                private {/id}=null;
+        delete
     }
 }
 
