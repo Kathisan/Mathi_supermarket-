@@ -115,7 +115,6 @@ public class OrderService {
 
         String oldStatus = order.getStatus();
 
-
         if (newStatus.equals("CANCELLED") && !oldStatus.equals("CANCELLED")) {
             for (OrderItem item : order.getOrderItems()) {
                 Product product = item.getProduct();
@@ -129,6 +128,7 @@ public class OrderService {
         order.setStatus(newStatus);
         return orderRepository.saveAndFlush(order);
     }
+
 
     public List<CustomerOrder> getOrdersByUser(User user) {
         return orderRepository.findByUserOrderByIdDesc(user); // Requires repository method
