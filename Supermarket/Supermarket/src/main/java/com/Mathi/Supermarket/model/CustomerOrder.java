@@ -96,22 +96,6 @@ public class CustomerOrder {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDateTime orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
