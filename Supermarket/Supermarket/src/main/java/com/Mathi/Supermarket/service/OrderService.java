@@ -115,16 +115,6 @@ public class OrderService {
 
         String oldStatus = order.getStatus();
 
-        if (newStatus.equals("CANCELLED") && !oldStatus.equals("CANCELLED")) {
-            for (OrderItem item : order.getOrderItems()) {
-                Product product = item.getProduct();
-                if (product != null) {
-                    product.setQuantity(product.getQuantity() + item.getQuantity());
-                    productRepository.save(product);
-                }
-            }
-        }
-
         order.setStatus(newStatus);
         return orderRepository.saveAndFlush(order);
     }
