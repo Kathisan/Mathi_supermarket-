@@ -18,32 +18,7 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
-    @PostMapping
-    public ResponseEntity<?> submitFeedback(@RequestBody Map<String, Object> request) {
-        try {
-            String username = (String) request.get("username");
-            if (username == null) {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "message", "Username is required"
-                ));
-            }
-
-            Feedback feedback = new Feedback();
-            feedback.setMessage((String) request.get("message"));
-            feedback.setRating((Integer) request.get("rating"));
-
-            Feedback savedFeedback = feedbackService.saveFeedback(feedback, username);
-            return ResponseEntity.ok(Map.of(
-                    "message", "Feedback submitted successfully",
-                    "feedback", savedFeedback
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of(
-                    "message", "Failed to submit feedback",
-                    "error", e.getMessage()
-            ));
-        }
-    }
+    
 
     @PutMapping("/{id}/rating")
     public ResponseEntity<?> updateRating(@PathVariable Long id, @RequestBody Map<String, Object> request) {
