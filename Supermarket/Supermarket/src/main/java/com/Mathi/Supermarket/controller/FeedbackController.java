@@ -102,16 +102,4 @@ public class FeedbackController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFeedback(@PathVariable Long id, @RequestParam String username) {
-        try {
-            feedbackService.deleteFeedback(id, username);
-            return ResponseEntity.ok(Map.of("message", "Feedback deleted successfully"));
-        } catch (Exception e) {
-            return ResponseEntity.status(403).body(Map.of(
-                    "message", "Feedback not found or access denied",
-                    "error", e.getMessage()
-            ));
-        }
-    }
-}
+    
