@@ -34,11 +34,12 @@ public class AdminPageController {
             @RequestParam(required = false) MultipartFile brandImage,
             @RequestParam(required = false) MultipartFile categoryImage
     ) throws IOException {
+        Brand brand = null; // define outside
+        if (brandName != null && !brandName.isEmpty()) {
+            brand = new Brand();
+            brand.setName(brandName);
 
-        if (brandName != null && !brandName.trim().isEmpty()) {
-            Brand brand = new Brand();
-            brand.setName(brandName.trim());
-
+            // image handling
             if (brandImage != null && !brandImage.isEmpty()) {
                 String fileName = System.currentTimeMillis() + "_" + brandImage.getOriginalFilename();
                 Path path = Paths.get("uploads/brands/" + fileName);
@@ -50,11 +51,13 @@ public class AdminPageController {
             brandRepository.save(brand);
         }
 
+
+        // ✅ Save Category only if category name is not empty
         if (categoryName != null && !categoryName.trim().isEmpty()) {
             Category category = new Category();
             category.setName(categoryName.trim());
 
-
+            // Save category image only if uploaded
             if (categoryImage != null && !categoryImage.isEmpty()) {
                 String fileName = System.currentTimeMillis() + "_" + categoryImage.getOriginalFilename();
                 Path path = Paths.get("uploads/categories/" + fileName);

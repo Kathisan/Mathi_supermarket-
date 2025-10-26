@@ -23,7 +23,6 @@ public class ProductService {
     private BrandRepository brandRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
