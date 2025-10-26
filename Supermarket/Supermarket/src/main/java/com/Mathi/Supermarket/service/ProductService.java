@@ -55,7 +55,12 @@ public class ProductService {
     public List<Product> searchProducts(String query) {
         return productRepository.findByNameContainingIgnoreCase(query);
     }
-   
+    // --- LOW STOCK & EXPIRY ALERTS ---
+    public List<Product> getLowStockProducts() {
+        return productRepository.findAll().stream()
+                .filter(product -> product.getQuantity() < 10)
+                .collect(Collectors.toList());
+    }
 
     public List<Product> getExpiringSoonProducts() {
         LocalDate thirtyDaysFromNow = LocalDate.now().plusDays(30);
