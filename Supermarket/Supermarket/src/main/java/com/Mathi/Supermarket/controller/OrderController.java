@@ -62,17 +62,6 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderId, @RequestBody Map<String, String> statusUpdate) {
-        try {
-            String newStatus = statusUpdate.get("status");
-            CustomerOrder updatedOrder = orderService.updateOrderStatus(orderId, newStatus);
-            return ResponseEntity.ok(updatedOrder);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @GetMapping("/user")
     public ResponseEntity<?> getOrdersByUser(@RequestParam String username) {
         try {
