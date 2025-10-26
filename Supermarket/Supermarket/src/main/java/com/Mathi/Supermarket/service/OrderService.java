@@ -133,30 +133,5 @@ public class OrderService {
     public List<CustomerOrder> getOrdersByUser(User user) {
         return orderRepository.findByUserOrderByIdDesc(user); // Requires repository method
     }
-
-
-    @Transactional
-    public CustomerOrder cancelOrderByUser(Long orderId, User user) {
-        CustomerOrder order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
-
-        if (!order.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You cannot cancel this order");
-        }
-
-        if ("COMPLETED".equalsIgnoreCase(order.getStatus())) {
-            throw new RuntimeException("Completed orders cannot be cancelled");
-        }
-
-        for (OrderItem item : order.getOrderItems()) {
-            Product product = item.getProduct();
-            if (product != null) {
-                product.setQuantity(product.getQuantity() + item.getQuantity());
-                productRepository.save(product);
-            }
-        }
-
-        order.setStatus("CANCELLED");
-        return orderRepository.saveAndFlush(order);
-    }
+    
 }
