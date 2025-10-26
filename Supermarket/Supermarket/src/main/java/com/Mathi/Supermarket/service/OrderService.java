@@ -39,7 +39,48 @@ public class OrderService {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> cartItems = (List<Map<String, Object>>) orderData.get("cartItems");
         double totalAmount = 0;
-        
+
+
+        for (Map<String, Object> itemData : cartItems) {
+            Long productId = ((Number) itemData.get("id")).longValue();
+            Number qtyNumber = (Number) itemData.get("quantity");
+            double quantity = qtyNumber.doubleValue();
+
+
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+
+            // Determine if fractions are allowed based on unit
+            String unit = product.getUnit();
+            boolean fractionAllowed = unit.equalsIgnoreCase("kg")
+                    || unit.equalsIgnoreCase("g")
+                    || unit.equalsIgnoreCase("ltr");
+
+
+            // Validate quantity
+            if (!fractionAllowed && quantity % 1 != 0) {
+                throw new IllegalArgumentException(
+                        "Quantity must be a whole number for product: " + product.getName()
+                );
+            }
+
+
+            if (product.getQuantity() < quantity) {
+
+                throw new RuntimeException("Not enough stock for " + product.getName());
+            }
+            product.setQuantity(product.getQuantity() - quantity);
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(product);
+            orderItem.setQuantity(quantity);
+            orderItem.setPrice(product.getPrice());
+            orderItem.setOrder(order);
+
+            order.getOrderItems().add(orderItem);
+
+            totalAmount += product.getPrice() * quantity;
+        }
 
         order.setTotalAmount(totalAmount);
 
@@ -105,14 +146,6 @@ public class OrderService {
 
         if ("COMPLETED".equalsIgnoreCase(order.getStatus())) {
             throw new RuntimeException("Completed orders cannot be cancelled");
-        }
-
-        for (OrderItem item : order.getOrderItems()) {
-            Product product = item.getProduct();
-            if (product != null) {
-                product.setQuantity(product.getQuantity() + item.getQuantity());
-                productRepository.save(product);
-            }
         }
 
         order.setStatus("CANCELLED");
