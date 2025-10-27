@@ -20,6 +20,9 @@ public class BrandController {
     private FileStorageService fileStorageService;
 
     @GetMapping
+    public List<Brand> getAllBrands() {
+        return brandRepository.findAll();
+    }
 
     @PostMapping("/add")
     public Brand addBrand(@RequestParam("name") String name,
