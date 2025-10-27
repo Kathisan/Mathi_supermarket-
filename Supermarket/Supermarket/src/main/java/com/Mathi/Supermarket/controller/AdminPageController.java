@@ -51,13 +51,19 @@ public class AdminPageController {
             brandRepository.save(brand);
         }
 
-
-        // ✅ Save Category only if category name is not empty
+        
         if (categoryName != null && !categoryName.trim().isEmpty()) {
             Category category = new Category();
             category.setName(categoryName.trim());
 
             // Save category image only if uploaded
+            if (categoryImage != null && !categoryImage.isEmpty()) {
+                String fileName = System.currentTimeMillis() + "_" + categoryImage.getOriginalFilename();
+                Path path = Paths.get("uploads/categories/" + fileName);
+                Files.createDirectories(path.getParent());
+                Files.write(path, categoryImage.getBytes());
+                category.setImageUrl("/uploads/categories/" + fileName);
+            }
 
 
             categoryRepository.save(category);
