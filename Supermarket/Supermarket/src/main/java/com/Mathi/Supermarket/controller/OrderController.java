@@ -27,15 +27,22 @@ public class OrderController {
     @PostMapping("/place")
     public ResponseEntity<?> placeOrder(@RequestBody Map<String, Object> orderData) {
         try {
-            // Get username from frontend JSON
             String username = (String) orderData.get("username");
+            if (username == null || username.isEmpty()) {
+                return ResponseEntity.badRequest().body("Please log in before placing an order.");
+            }
 
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found. Please log in again."));
+            
             CustomerOrder newOrder = orderService.placeOrder(orderData, user);
             return ResponseEntity.ok(newOrder);
+
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
 
     @GetMapping
