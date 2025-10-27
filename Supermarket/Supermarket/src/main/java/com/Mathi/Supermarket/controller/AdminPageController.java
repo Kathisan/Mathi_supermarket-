@@ -51,7 +51,7 @@ public class AdminPageController {
             brandRepository.save(brand);
         }
 
-        
+
         if (categoryName != null && !categoryName.trim().isEmpty()) {
             Category category = new Category();
             category.setName(categoryName.trim());
